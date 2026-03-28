@@ -1,0 +1,1305 @@
+{
+  "generated_at": "2026-03-28T14:17:33.387741Z",
+  "total_customers": 6,
+  "results": [
+    {
+      "customer_id": "C001",
+      "customer_name": "Apex Retail Co.",
+      "tier": "Gold",
+      "city": "Mumbai",
+      "contract_value": 142000,
+      "orders": 34,
+      "open_tickets": 2,
+      "missed_deliveries": 3,
+      "late_deliveries": 5,
+      "payment_delays": 1,
+      "nps_score": 7.0,
+      "sentiment": {
+        "compound": -0.7351,
+        "positive": 0.3306,
+        "negative": 0.6694,
+        "neutral": 0.0,
+        "churn_signals": 0,
+        "anger_signals": 2,
+        "label": "Angry"
+      },
+      "arc": [
+        {
+          "segment": "Opening",
+          "score": -71
+        },
+        {
+          "segment": "Early",
+          "score": -29
+        },
+        {
+          "segment": "Mid",
+          "score": -31
+        },
+        {
+          "segment": "Late",
+          "score": 20
+        },
+        {
+          "segment": "Closing",
+          "score": 0
+        }
+      ],
+      "keywords": {
+        "top_terms": [
+          "unacceptable",
+          "compensation",
+          "dinesh",
+          "i've",
+          "waiting",
+          "ord",
+          "1019",
+          "since",
+          "yesterday",
+          "product",
+          "launch",
+          "today"
+        ],
+        "term_scores": {
+          "unacceptable": 0.0929,
+          "compensation": 0.0679,
+          "dinesh": 0.0357,
+          "i've": 0.0357,
+          "waiting": 0.0357,
+          "ord": 0.0357,
+          "1019": 0.0357,
+          "since": 0.0357,
+          "yesterday": 0.0357,
+          "product": 0.0357,
+          "launch": 0.0357,
+          "today": 0.0357
+        },
+        "topics": [
+          "billing / refund"
+        ],
+        "topic_hits": {
+          "billing / refund": 1
+        }
+      },
+      "churn": {
+        "score": 100,
+        "label": "Critical",
+        "probability": 0.999,
+        "linear_sum": 6.9573,
+        "importances": [
+          {
+            "feature": "Missed Deliveries",
+            "importance_pct": 19.0,
+            "direction": "risk"
+          },
+          {
+            "feature": "Call Sentiment",
+            "importance_pct": 15.8,
+            "direction": "risk"
+          },
+          {
+            "feature": "Late Deliveries",
+            "importance_pct": 14.6,
+            "direction": "risk"
+          },
+          {
+            "feature": "NPS (inverse)",
+            "importance_pct": 11.7,
+            "direction": "risk"
+          },
+          {
+            "feature": "Open Tickets",
+            "importance_pct": 10.7,
+            "direction": "risk"
+          },
+          {
+            "feature": "Order Velocity",
+            "importance_pct": 10.1,
+            "direction": "risk"
+          },
+          {
+            "feature": "Anger Phrases",
+            "importance_pct": 7.8,
+            "direction": "risk"
+          },
+          {
+            "feature": "Customer Tier",
+            "importance_pct": 5.8,
+            "direction": "protective"
+          },
+          {
+            "feature": "Payment Delays",
+            "importance_pct": 4.4,
+            "direction": "risk"
+          },
+          {
+            "feature": "Churn Phrases",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          }
+        ]
+      },
+      "mood": {
+        "label": "Churning",
+        "emoji": "🚨",
+        "color": "#ef4444",
+        "confidence": 97,
+        "reason": "Churn score 100/100 + compound -0.74 — active departure intent detected"
+      },
+      "radar": [
+        {
+          "metric": "Loyalty",
+          "value": 56
+        },
+        {
+          "metric": "Satisfaction",
+          "value": 70
+        },
+        {
+          "metric": "Engagement",
+          "value": 72
+        },
+        {
+          "metric": "Spend",
+          "value": 68
+        },
+        {
+          "metric": "Sentiment",
+          "value": 13
+        },
+        {
+          "metric": "Reliability",
+          "value": 45
+        }
+      ],
+      "scripts": [
+        {
+          "scenario": "Retention & Win-Back",
+          "tone": "Empathetic · Accountable · Solution-First",
+          "urgency": "CRITICAL",
+          "opener": "'Good [morning/afternoon], this is [Agent Name] from SwiftRoute's Priority Accounts team. I'm calling specifically about Apex Retail Co.'s account — I want to personally ensure we get you the resolution you deserve.'",
+          "key_points": [
+            "Acknowledge billing / refund without making excuses — take immediate ownership",
+            "Reference specific data: '3 missed + 5 late deliveries is unacceptable for a Gold tier partner'",
+            "Propose a 30-day service guarantee with SLA breach penalties in the customer's favour",
+            "Introduce a dedicated account manager as single point of contact for Apex Retail Co.",
+            "Offer 15% credit on next month's invoices as an immediate goodwill gesture"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'I'm already looking at competitors / other options'",
+              "response": "'I completely understand — you deserve the best service. Before you decide, I'd like 15 minutes with our Operations Director to walk you through the specific changes we're making for Apex Retail Co.. We genuinely value this ₹142,000 partnership.'"
+            },
+            {
+              "objection": "'This has happened too many times — we're done'",
+              "response": "'You're absolutely right to feel that way. What I can do right now is assign a dedicated route monitor for every Apex Retail Co. order and set up a weekly check-in so you have full visibility. Can we try that for 30 days?'"
+            },
+            {
+              "objection": "'I want a refund / compensation before we discuss anything else'",
+              "response": "'Absolutely — I'm authorising 15% credit on next month's invoices right now and you'll receive a written confirmation within the hour. Your trust is worth more than the invoice.'"
+            }
+          ],
+          "closer": "'Here's what happens next — I'll send you a written commitment letter by end of day, with your dedicated manager's direct line. You'll hear from [Manager Name] within 2 hours. Does that work for you?'"
+        },
+        {
+          "scenario": "De-escalation & Recovery",
+          "tone": "Calm · Validating · Action-Oriented",
+          "urgency": "HIGH",
+          "opener": "'Hello, this is [Agent Name] — I've been specifically briefed on the challenges Apex Retail Co. has experienced with billing / refund. I'm not calling to apologise and disappear; I'm calling to fix this today.'",
+          "key_points": [
+            "Never interrupt — let the customer finish completely before speaking",
+            "Use name-matching language: mirror their key phrases to show you've listened",
+            "Replace passive language: swap 'I'll look into it' → 'I'm doing X right now'",
+            "Quantify acknowledgement: 'I can see 2 open tickets — I'm resolving all of them on this call'",
+            "Set a time-bound commitment: 'By [specific time today], you'll have [specific outcome]'"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'Your company never follows through on promises'",
+              "response": "'That's a fair history to point to. This time I want to send you a written action plan with my name on it before we hang up — something concrete you can hold us to.'"
+            },
+            {
+              "objection": "'I want to speak to a manager / director immediately'",
+              "response": "'Of course — I'm connecting you with [Director Name] right after this call. While I have you, let me gather all the details so they're fully briefed and you don't have to repeat yourself.'"
+            }
+          ],
+          "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
+        }
+      ],
+      "analysed_at": "2026-03-28T14:17:33.382931Z"
+    },
+    {
+      "customer_id": "C002",
+      "customer_name": "Neon Grocery Hub",
+      "tier": "Silver",
+      "city": "Delhi",
+      "contract_value": 25000,
+      "orders": 21,
+      "open_tickets": 1,
+      "missed_deliveries": 1,
+      "late_deliveries": 4,
+      "payment_delays": 2,
+      "nps_score": 6.0,
+      "sentiment": {
+        "compound": -0.8962,
+        "positive": 0.1901,
+        "negative": 0.8099,
+        "neutral": 0.0,
+        "churn_signals": 0,
+        "anger_signals": 0,
+        "label": "Angry"
+      },
+      "arc": [
+        {
+          "segment": "Opening",
+          "score": -71
+        },
+        {
+          "segment": "Early",
+          "score": -33
+        },
+        {
+          "segment": "Mid",
+          "score": -25
+        },
+        {
+          "segment": "Late",
+          "score": 0
+        },
+        {
+          "segment": "Closing",
+          "score": 0
+        }
+      ],
+      "keywords": {
+        "top_terms": [
+          "i'm",
+          "late",
+          "reliability",
+          "happy",
+          "again",
+          "third",
+          "month",
+          "frustrated",
+          "problem",
+          "we're",
+          "grocery",
+          "hub"
+        ],
+        "term_scores": {
+          "i'm": 0.12,
+          "late": 0.072,
+          "reliability": 0.072,
+          "happy": 0.06,
+          "again": 0.04,
+          "third": 0.04,
+          "month": 0.04,
+          "frustrated": 0.04,
+          "problem": 0.04,
+          "we're": 0.04,
+          "grocery": 0.04,
+          "hub": 0.04
+        },
+        "topics": [
+          "delivery issue",
+          "late arrival",
+          "positive feedback"
+        ],
+        "topic_hits": {
+          "delivery issue": 2,
+          "late arrival": 1,
+          "positive feedback": 1
+        }
+      },
+      "churn": {
+        "score": 100,
+        "label": "Critical",
+        "probability": 0.9982,
+        "linear_sum": 6.3317,
+        "importances": [
+          {
+            "feature": "Call Sentiment",
+            "importance_pct": 23.4,
+            "direction": "risk"
+          },
+          {
+            "feature": "NPS (inverse)",
+            "importance_pct": 19.0,
+            "direction": "risk"
+          },
+          {
+            "feature": "Order Velocity",
+            "importance_pct": 18.5,
+            "direction": "risk"
+          },
+          {
+            "feature": "Late Deliveries",
+            "importance_pct": 14.2,
+            "direction": "risk"
+          },
+          {
+            "feature": "Payment Delays",
+            "importance_pct": 10.7,
+            "direction": "risk"
+          },
+          {
+            "feature": "Missed Deliveries",
+            "importance_pct": 7.7,
+            "direction": "risk"
+          },
+          {
+            "feature": "Open Tickets",
+            "importance_pct": 6.5,
+            "direction": "risk"
+          },
+          {
+            "feature": "Churn Phrases",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Anger Phrases",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Customer Tier",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          }
+        ]
+      },
+      "mood": {
+        "label": "Churning",
+        "emoji": "🚨",
+        "color": "#ef4444",
+        "confidence": 97,
+        "reason": "Churn score 100/100 + compound -0.90 — active departure intent detected"
+      },
+      "radar": [
+        {
+          "metric": "Loyalty",
+          "value": 35
+        },
+        {
+          "metric": "Satisfaction",
+          "value": 60
+        },
+        {
+          "metric": "Engagement",
+          "value": 86
+        },
+        {
+          "metric": "Spend",
+          "value": 20
+        },
+        {
+          "metric": "Sentiment",
+          "value": 5
+        },
+        {
+          "metric": "Reliability",
+          "value": 70
+        }
+      ],
+      "scripts": [
+        {
+          "scenario": "Retention & Win-Back",
+          "tone": "Empathetic · Accountable · Solution-First",
+          "urgency": "CRITICAL",
+          "opener": "'Good [morning/afternoon], this is [Agent Name] from SwiftRoute's Priority Accounts team. I'm calling specifically about Neon Grocery Hub's account — I want to personally ensure we get you the resolution you deserve.'",
+          "key_points": [
+            "Acknowledge delivery issue without making excuses — take immediate ownership",
+            "Reference specific data: '1 missed + 4 late deliveries is unacceptable for a Silver tier partner'",
+            "Propose a 30-day service guarantee with SLA breach penalties in the customer's favour",
+            "Introduce a dedicated account manager as single point of contact for Neon Grocery Hub",
+            "Offer 15% credit on next month's invoices as an immediate goodwill gesture"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'I'm already looking at competitors / other options'",
+              "response": "'I completely understand — you deserve the best service. Before you decide, I'd like 15 minutes with our Operations Director to walk you through the specific changes we're making for Neon Grocery Hub. We genuinely value this ₹25,000 partnership.'"
+            },
+            {
+              "objection": "'This has happened too many times — we're done'",
+              "response": "'You're absolutely right to feel that way. What I can do right now is assign a dedicated route monitor for every Neon Grocery Hub order and set up a weekly check-in so you have full visibility. Can we try that for 30 days?'"
+            },
+            {
+              "objection": "'I want a refund / compensation before we discuss anything else'",
+              "response": "'Absolutely — I'm authorising 15% credit on next month's invoices right now and you'll receive a written confirmation within the hour. Your trust is worth more than the invoice.'"
+            }
+          ],
+          "closer": "'Here's what happens next — I'll send you a written commitment letter by end of day, with your dedicated manager's direct line. You'll hear from [Manager Name] within 2 hours. Does that work for you?'"
+        },
+        {
+          "scenario": "De-escalation & Recovery",
+          "tone": "Calm · Validating · Action-Oriented",
+          "urgency": "HIGH",
+          "opener": "'Hello, this is [Agent Name] — I've been specifically briefed on the challenges Neon Grocery Hub has experienced with delivery issue. I'm not calling to apologise and disappear; I'm calling to fix this today.'",
+          "key_points": [
+            "Never interrupt — let the customer finish completely before speaking",
+            "Use name-matching language: mirror their key phrases to show you've listened",
+            "Replace passive language: swap 'I'll look into it' → 'I'm doing X right now'",
+            "Quantify acknowledgement: 'I can see 1 open tickets — I'm resolving all of them on this call'",
+            "Set a time-bound commitment: 'By [specific time today], you'll have [specific outcome]'"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'Your company never follows through on promises'",
+              "response": "'That's a fair history to point to. This time I want to send you a written action plan with my name on it before we hang up — something concrete you can hold us to.'"
+            },
+            {
+              "objection": "'I want to speak to a manager / director immediately'",
+              "response": "'Of course — I'm connecting you with [Director Name] right after this call. While I have you, let me gather all the details so they're fully briefed and you don't have to repeat yourself.'"
+            }
+          ],
+          "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
+        }
+      ],
+      "analysed_at": "2026-03-28T14:17:33.383786Z"
+    },
+    {
+      "customer_id": "C003",
+      "customer_name": "BlueCart Foods",
+      "tier": "Platinum",
+      "city": "Bangalore",
+      "contract_value": 310000,
+      "orders": 57,
+      "open_tickets": 0,
+      "missed_deliveries": 0,
+      "late_deliveries": 1,
+      "payment_delays": 0,
+      "nps_score": 9.0,
+      "sentiment": {
+        "compound": 0.9848,
+        "positive": 0.9229,
+        "negative": 0.0771,
+        "neutral": 0.0,
+        "churn_signals": 0,
+        "anger_signals": 0,
+        "label": "Highly Positive"
+      },
+      "arc": [
+        {
+          "segment": "Opening",
+          "score": 89
+        },
+        {
+          "segment": "Early",
+          "score": 31
+        },
+        {
+          "segment": "Mid",
+          "score": 0
+        },
+        {
+          "segment": "Late",
+          "score": 86
+        },
+        {
+          "segment": "Closing",
+          "score": 0
+        }
+      ],
+      "keywords": {
+        "top_terms": [
+          "upgrade",
+          "fantastic",
+          "meera",
+          "everything",
+          "great",
+          "team",
+          "reliable",
+          "consistent",
+          "deal",
+          "perishables",
+          "faster",
+          "means"
+        ],
+        "term_scores": {
+          "upgrade": 0.0645,
+          "fantastic": 0.0581,
+          "meera": 0.0323,
+          "everything": 0.0323,
+          "great": 0.0323,
+          "team": 0.0323,
+          "reliable": 0.0323,
+          "consistent": 0.0323,
+          "deal": 0.0323,
+          "perishables": 0.0323,
+          "faster": 0.0323,
+          "means": 0.0323
+        },
+        "topics": [
+          "positive feedback",
+          "delivery issue",
+          "upsell opportunity"
+        ],
+        "topic_hits": {
+          "delivery issue": 2,
+          "positive feedback": 3,
+          "upsell opportunity": 1
+        }
+      },
+      "churn": {
+        "score": 1,
+        "label": "Low",
+        "probability": 0.0095,
+        "linear_sum": -4.6465,
+        "importances": [
+          {
+            "feature": "Call Sentiment",
+            "importance_pct": 51.7,
+            "direction": "protective"
+          },
+          {
+            "feature": "Customer Tier",
+            "importance_pct": 28.7,
+            "direction": "protective"
+          },
+          {
+            "feature": "NPS (inverse)",
+            "importance_pct": 9.6,
+            "direction": "risk"
+          },
+          {
+            "feature": "Late Deliveries",
+            "importance_pct": 7.2,
+            "direction": "risk"
+          },
+          {
+            "feature": "Order Velocity",
+            "importance_pct": 2.9,
+            "direction": "risk"
+          },
+          {
+            "feature": "Missed Deliveries",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Open Tickets",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Payment Delays",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Churn Phrases",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Anger Phrases",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          }
+        ]
+      },
+      "mood": {
+        "label": "Highly Positive",
+        "emoji": "😊",
+        "color": "#34d399",
+        "confidence": 95,
+        "reason": "Strong positive compound (0.98) and positive token ratio 92%"
+      },
+      "radar": [
+        {
+          "metric": "Loyalty",
+          "value": 95
+        },
+        {
+          "metric": "Satisfaction",
+          "value": 90
+        },
+        {
+          "metric": "Engagement",
+          "value": 100
+        },
+        {
+          "metric": "Spend",
+          "value": 91
+        },
+        {
+          "metric": "Sentiment",
+          "value": 99
+        },
+        {
+          "metric": "Reliability",
+          "value": 95
+        }
+      ],
+      "scripts": [
+        {
+          "scenario": "Upsell to Platinum Tier",
+          "tone": "Consultative · Value-Led · Collaborative",
+          "urgency": "LOW",
+          "opener": "'Hi [Customer Name], this is [Agent Name] from SwiftRoute. I've been reviewing BlueCart Foods's delivery patterns and I've spotted some opportunities to make your logistics even more efficient — do you have 5 minutes?'",
+          "key_points": [
+            "Lead with data: 'BlueCart Foods has completed 57 orders — you're in our top-performing Bangalore segment'",
+            "Reference their interest: 'You mentioned reducing logistics costs — Platinum tier saves ₹24,800 annually'",
+            "Pitch same-day / cold-chain / time-slot delivery as operational differentiators",
+            "Offer a real-time tracking dashboard with custom SLA alerts — frame as operational ROI",
+            "Anchor to contract value: 'Your ₹310,000 contract qualifies for our enhanced SLA package'"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'We're happy with the current setup'",
+              "response": "'That's great to hear — and we want to keep it that way. The upgrade doesn't change your operations; it gives you more protection, faster response, and a lower unit cost per delivery. No disruption, just more.'"
+            },
+            {
+              "objection": "'We need to get approval from procurement / finance'",
+              "response": "'Completely understood — I can prepare a one-page business case with the cost comparison and ROI calculation for your team. Would it help if I joined the call when you present it?'"
+            },
+            {
+              "objection": "'Is there a trial period?'",
+              "response": "'Yes — I can offer a 30-day pilot of Platinum tier at your current rate with no commitment. If the metrics don't speak for themselves, you stay on Platinum. Zero risk.'"
+            }
+          ],
+          "closer": "'I'll send over the Platinum tier proposal with a 30-day trial option — no commitment, no pricing change until you decide. Does that sound fair?'"
+        }
+      ],
+      "analysed_at": "2026-03-28T14:17:33.384770Z"
+    },
+    {
+      "customer_id": "C004",
+      "customer_name": "Harbor Medicals",
+      "tier": "Bronze",
+      "city": "Chennai",
+      "contract_value": 18000,
+      "orders": 9,
+      "open_tickets": 0,
+      "missed_deliveries": 0,
+      "late_deliveries": 1,
+      "payment_delays": 0,
+      "nps_score": 8.0,
+      "sentiment": {
+        "compound": 0.0,
+        "positive": 0.0,
+        "negative": 0.0,
+        "neutral": 1.0,
+        "churn_signals": 0,
+        "anger_signals": 0,
+        "label": "Neutral"
+      },
+      "arc": [
+        {
+          "segment": "Opening",
+          "score": 0
+        },
+        {
+          "segment": "Early",
+          "score": 0
+        },
+        {
+          "segment": "Mid",
+          "score": 0
+        },
+        {
+          "segment": "Late",
+          "score": 0
+        },
+        {
+          "segment": "Closing",
+          "score": 0
+        }
+      ],
+      "keywords": {
+        "top_terms": [],
+        "term_scores": {},
+        "topics": [],
+        "topic_hits": {}
+      },
+      "churn": {
+        "score": 100,
+        "label": "Critical",
+        "probability": 0.8375,
+        "linear_sum": 1.64,
+        "importances": [
+          {
+            "feature": "Order Velocity",
+            "importance_pct": 54.5,
+            "direction": "risk"
+          },
+          {
+            "feature": "NPS (inverse)",
+            "importance_pct": 21.4,
+            "direction": "risk"
+          },
+          {
+            "feature": "Customer Tier",
+            "importance_pct": 16.0,
+            "direction": "risk"
+          },
+          {
+            "feature": "Late Deliveries",
+            "importance_pct": 8.0,
+            "direction": "risk"
+          },
+          {
+            "feature": "Missed Deliveries",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Open Tickets",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Payment Delays",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Call Sentiment",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Churn Phrases",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          },
+          {
+            "feature": "Anger Phrases",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          }
+        ]
+      },
+      "mood": {
+        "label": "Neutral",
+        "emoji": "😐",
+        "color": "#94a3b8",
+        "confidence": 97,
+        "reason": "No strong sentiment signal detected — transactional / factual exchange"
+      },
+      "radar": [
+        {
+          "metric": "Loyalty",
+          "value": 15
+        },
+        {
+          "metric": "Satisfaction",
+          "value": 80
+        },
+        {
+          "metric": "Engagement",
+          "value": 100
+        },
+        {
+          "metric": "Spend",
+          "value": 46
+        },
+        {
+          "metric": "Sentiment",
+          "value": 50
+        },
+        {
+          "metric": "Reliability",
+          "value": 95
+        }
+      ],
+      "scripts": [
+        {
+          "scenario": "Retention & Win-Back",
+          "tone": "Empathetic · Accountable · Solution-First",
+          "urgency": "CRITICAL",
+          "opener": "'Good [morning/afternoon], this is [Agent Name] from SwiftRoute's Priority Accounts team. I'm calling specifically about Harbor Medicals's account — I want to personally ensure we get you the resolution you deserve.'",
+          "key_points": [
+            "Acknowledge recent service performance without making excuses — take immediate ownership",
+            "Reference specific data: '0 missed + 1 late deliveries is unacceptable for a Bronze tier partner'",
+            "Propose a 30-day service guarantee with SLA breach penalties in the customer's favour",
+            "Introduce a dedicated account manager as single point of contact for Harbor Medicals",
+            "Offer 15% credit on next month's invoices as an immediate goodwill gesture"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'I'm already looking at competitors / other options'",
+              "response": "'I completely understand — you deserve the best service. Before you decide, I'd like 15 minutes with our Operations Director to walk you through the specific changes we're making for Harbor Medicals. We genuinely value this ₹18,000 partnership.'"
+            },
+            {
+              "objection": "'This has happened too many times — we're done'",
+              "response": "'You're absolutely right to feel that way. What I can do right now is assign a dedicated route monitor for every Harbor Medicals order and set up a weekly check-in so you have full visibility. Can we try that for 30 days?'"
+            },
+            {
+              "objection": "'I want a refund / compensation before we discuss anything else'",
+              "response": "'Absolutely — I'm authorising 15% credit on next month's invoices right now and you'll receive a written confirmation within the hour. Your trust is worth more than the invoice.'"
+            }
+          ],
+          "closer": "'Here's what happens next — I'll send you a written commitment letter by end of day, with your dedicated manager's direct line. You'll hear from [Manager Name] within 2 hours. Does that work for you?'"
+        }
+      ],
+      "analysed_at": "2026-03-28T14:17:33.385077Z"
+    },
+    {
+      "customer_id": "C005",
+      "customer_name": "Spark Electronics",
+      "tier": "Gold",
+      "city": "Hyderabad",
+      "contract_value": 172000,
+      "orders": 44,
+      "open_tickets": 4,
+      "missed_deliveries": 6,
+      "late_deliveries": 9,
+      "payment_delays": 3,
+      "nps_score": 5.0,
+      "sentiment": {
+        "compound": -0.9911,
+        "positive": 0.0262,
+        "negative": 0.9738,
+        "neutral": 0.0,
+        "churn_signals": 3,
+        "anger_signals": 5,
+        "label": "Angry"
+      },
+      "arc": [
+        {
+          "segment": "Opening",
+          "score": -93
+        },
+        {
+          "segment": "Early",
+          "score": -77
+        },
+        {
+          "segment": "Mid",
+          "score": -52
+        },
+        {
+          "segment": "Late",
+          "score": -88
+        },
+        {
+          "segment": "Closing",
+          "score": -38
+        }
+      ],
+      "keywords": {
+        "top_terms": [
+          "quickship",
+          "missing",
+          "damaged",
+          "lost",
+          "ridiculous",
+          "i've",
+          "issues",
+          "packages",
+          "absolutely",
+          "agents",
+          "careless",
+          "electronics"
+        ],
+        "term_scores": {
+          "quickship": 0.0857,
+          "missing": 0.08,
+          "damaged": 0.08,
+          "lost": 0.0714,
+          "ridiculous": 0.0686,
+          "i've": 0.0571,
+          "issues": 0.0286,
+          "packages": 0.0286,
+          "absolutely": 0.0286,
+          "agents": 0.0286,
+          "careless": 0.0286,
+          "electronics": 0.0286
+        },
+        "topics": [
+          "damage / loss",
+          "agent complaint",
+          "churn risk"
+        ],
+        "topic_hits": {
+          "damage / loss": 3,
+          "agent complaint": 2,
+          "churn risk": 2
+        }
+      },
+      "churn": {
+        "score": 100,
+        "label": "Critical",
+        "probability": 1.0,
+        "linear_sum": 17.5705,
+        "importances": [
+          {
+            "feature": "Missed Deliveries",
+            "importance_pct": 18.7,
+            "direction": "risk"
+          },
+          {
+            "feature": "Churn Phrases",
+            "importance_pct": 15.8,
+            "direction": "risk"
+          },
+          {
+            "feature": "Late Deliveries",
+            "importance_pct": 12.9,
+            "direction": "risk"
+          },
+          {
+            "feature": "Open Tickets",
+            "importance_pct": 10.5,
+            "direction": "risk"
+          },
+          {
+            "feature": "Call Sentiment",
+            "importance_pct": 10.4,
+            "direction": "risk"
+          },
+          {
+            "feature": "NPS (inverse)",
+            "importance_pct": 9.6,
+            "direction": "risk"
+          },
+          {
+            "feature": "Anger Phrases",
+            "importance_pct": 9.6,
+            "direction": "risk"
+          },
+          {
+            "feature": "Payment Delays",
+            "importance_pct": 6.5,
+            "direction": "risk"
+          },
+          {
+            "feature": "Order Velocity",
+            "importance_pct": 3.1,
+            "direction": "risk"
+          },
+          {
+            "feature": "Customer Tier",
+            "importance_pct": 2.9,
+            "direction": "protective"
+          }
+        ]
+      },
+      "mood": {
+        "label": "Churning",
+        "emoji": "🚨",
+        "color": "#ef4444",
+        "confidence": 97,
+        "reason": "Churn score 100/100 + compound -0.99 — active departure intent detected"
+      },
+      "radar": [
+        {
+          "metric": "Loyalty",
+          "value": 73
+        },
+        {
+          "metric": "Satisfaction",
+          "value": 50
+        },
+        {
+          "metric": "Engagement",
+          "value": 44
+        },
+        {
+          "metric": "Spend",
+          "value": 65
+        },
+        {
+          "metric": "Sentiment",
+          "value": 0
+        },
+        {
+          "metric": "Reliability",
+          "value": 0
+        }
+      ],
+      "scripts": [
+        {
+          "scenario": "Retention & Win-Back",
+          "tone": "Empathetic · Accountable · Solution-First",
+          "urgency": "CRITICAL",
+          "opener": "'Good [morning/afternoon], this is [Agent Name] from SwiftRoute's Priority Accounts team. I'm calling specifically about Spark Electronics's account — I want to personally ensure we get you the resolution you deserve.'",
+          "key_points": [
+            "Acknowledge damage / loss without making excuses — take immediate ownership",
+            "Reference specific data: '6 missed + 9 late deliveries is unacceptable for a Gold tier partner'",
+            "Propose a 30-day service guarantee with SLA breach penalties in the customer's favour",
+            "Introduce a dedicated account manager as single point of contact for Spark Electronics",
+            "Offer 15% credit on next month's invoices as an immediate goodwill gesture",
+            "For damage/loss claims: confirm written resolution letter within 4 hours with full RCA"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'I'm already looking at competitors / other options'",
+              "response": "'I completely understand — you deserve the best service. Before you decide, I'd like 15 minutes with our Operations Director to walk you through the specific changes we're making for Spark Electronics. We genuinely value this ₹172,000 partnership.'"
+            },
+            {
+              "objection": "'This has happened too many times — we're done'",
+              "response": "'You're absolutely right to feel that way. What I can do right now is assign a dedicated route monitor for every Spark Electronics order and set up a weekly check-in so you have full visibility. Can we try that for 30 days?'"
+            },
+            {
+              "objection": "'I want a refund / compensation before we discuss anything else'",
+              "response": "'Absolutely — I'm authorising 15% credit on next month's invoices right now and you'll receive a written confirmation within the hour. Your trust is worth more than the invoice.'"
+            }
+          ],
+          "closer": "'Here's what happens next — I'll send you a written commitment letter by end of day, with your dedicated manager's direct line. You'll hear from [Manager Name] within 2 hours. Does that work for you?'"
+        },
+        {
+          "scenario": "De-escalation & Recovery",
+          "tone": "Calm · Validating · Action-Oriented",
+          "urgency": "HIGH",
+          "opener": "'Hello, this is [Agent Name] — I've been specifically briefed on the challenges Spark Electronics has experienced with damage / loss. I'm not calling to apologise and disappear; I'm calling to fix this today.'",
+          "key_points": [
+            "Never interrupt — let the customer finish completely before speaking",
+            "Use name-matching language: mirror their key phrases to show you've listened",
+            "Replace passive language: swap 'I'll look into it' → 'I'm doing X right now'",
+            "Quantify acknowledgement: 'I can see 4 open tickets — I'm resolving all of them on this call'",
+            "Set a time-bound commitment: 'By [specific time today], you'll have [specific outcome]'",
+            "Do NOT offer generic apologies — be specific about what went wrong and what changes"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'Your company never follows through on promises'",
+              "response": "'That's a fair history to point to. This time I want to send you a written action plan with my name on it before we hang up — something concrete you can hold us to.'"
+            },
+            {
+              "objection": "'I want to speak to a manager / director immediately'",
+              "response": "'Of course — I'm connecting you with [Director Name] right after this call. While I have you, let me gather all the details so they're fully briefed and you don't have to repeat yourself.'"
+            },
+            {
+              "objection": "'You damaged/lost our goods — we want full reimbursement'",
+              "response": "'Absolutely — I'm raising a full insurance claim right now. You'll receive a claim reference number before this call ends and a settlement timeline in writing within 24 hours.'"
+            }
+          ],
+          "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
+        }
+      ],
+      "analysed_at": "2026-03-28T14:17:33.385709Z"
+    },
+    {
+      "customer_id": "C006",
+      "customer_name": "Urban Threads",
+      "tier": "Silver",
+      "city": "Pune",
+      "contract_value": 34000,
+      "orders": 18,
+      "open_tickets": 3,
+      "missed_deliveries": 4,
+      "late_deliveries": 7,
+      "payment_delays": 4,
+      "nps_score": 3.0,
+      "sentiment": {
+        "compound": -0.9862,
+        "positive": 0.1139,
+        "negative": 0.8861,
+        "neutral": 0.0,
+        "churn_signals": 2,
+        "anger_signals": 5,
+        "label": "Angry"
+      },
+      "arc": [
+        {
+          "segment": "Opening",
+          "score": -85
+        },
+        {
+          "segment": "Early",
+          "score": -92
+        },
+        {
+          "segment": "Mid",
+          "score": -71
+        },
+        {
+          "segment": "Late",
+          "score": -69
+        },
+        {
+          "segment": "Closing",
+          "score": -10
+        }
+      ],
+      "keywords": {
+        "top_terms": [
+          "cancel",
+          "incompetent",
+          "failed",
+          "i've",
+          "i'm",
+          "don't",
+          "even",
+          "start",
+          "again",
+          "customers",
+          "waiting",
+          "store"
+        ],
+        "term_scores": {
+          "cancel": 0.0714,
+          "incompetent": 0.0643,
+          "failed": 0.0571,
+          "i've": 0.0476,
+          "i'm": 0.0476,
+          "don't": 0.0238,
+          "even": 0.0238,
+          "start": 0.0238,
+          "again": 0.0238,
+          "customers": 0.0238,
+          "waiting": 0.0238,
+          "store": 0.0238
+        },
+        "topics": [
+          "delivery issue",
+          "churn risk"
+        ],
+        "topic_hits": {
+          "delivery issue": 2,
+          "churn risk": 2
+        }
+      },
+      "churn": {
+        "score": 100,
+        "label": "Critical",
+        "probability": 1.0,
+        "linear_sum": 16.8996,
+        "importances": [
+          {
+            "feature": "NPS (inverse)",
+            "importance_pct": 14.7,
+            "direction": "risk"
+          },
+          {
+            "feature": "Missed Deliveries",
+            "importance_pct": 13.7,
+            "direction": "risk"
+          },
+          {
+            "feature": "Churn Phrases",
+            "importance_pct": 11.6,
+            "direction": "risk"
+          },
+          {
+            "feature": "Call Sentiment",
+            "importance_pct": 11.4,
+            "direction": "risk"
+          },
+          {
+            "feature": "Late Deliveries",
+            "importance_pct": 11.1,
+            "direction": "risk"
+          },
+          {
+            "feature": "Anger Phrases",
+            "importance_pct": 10.5,
+            "direction": "risk"
+          },
+          {
+            "feature": "Payment Delays",
+            "importance_pct": 9.5,
+            "direction": "risk"
+          },
+          {
+            "feature": "Order Velocity",
+            "importance_pct": 8.8,
+            "direction": "risk"
+          },
+          {
+            "feature": "Open Tickets",
+            "importance_pct": 8.7,
+            "direction": "risk"
+          },
+          {
+            "feature": "Customer Tier",
+            "importance_pct": 0.0,
+            "direction": "protective"
+          }
+        ]
+      },
+      "mood": {
+        "label": "Churning",
+        "emoji": "🚨",
+        "color": "#ef4444",
+        "confidence": 97,
+        "reason": "Churn score 100/100 + compound -0.99 — active departure intent detected"
+      },
+      "radar": [
+        {
+          "metric": "Loyalty",
+          "value": 30
+        },
+        {
+          "metric": "Satisfaction",
+          "value": 30
+        },
+        {
+          "metric": "Engagement",
+          "value": 58
+        },
+        {
+          "metric": "Spend",
+          "value": 31
+        },
+        {
+          "metric": "Sentiment",
+          "value": 0
+        },
+        {
+          "metric": "Reliability",
+          "value": 25
+        }
+      ],
+      "scripts": [
+        {
+          "scenario": "Retention & Win-Back",
+          "tone": "Empathetic · Accountable · Solution-First",
+          "urgency": "CRITICAL",
+          "opener": "'Good [morning/afternoon], this is [Agent Name] from SwiftRoute's Priority Accounts team. I'm calling specifically about Urban Threads's account — I want to personally ensure we get you the resolution you deserve.'",
+          "key_points": [
+            "Acknowledge delivery issue without making excuses — take immediate ownership",
+            "Reference specific data: '4 missed + 7 late deliveries is unacceptable for a Silver tier partner'",
+            "Propose a 30-day service guarantee with SLA breach penalties in the customer's favour",
+            "Introduce a dedicated account manager as single point of contact for Urban Threads",
+            "Offer 15% credit on next month's invoices as an immediate goodwill gesture"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'I'm already looking at competitors / other options'",
+              "response": "'I completely understand — you deserve the best service. Before you decide, I'd like 15 minutes with our Operations Director to walk you through the specific changes we're making for Urban Threads. We genuinely value this ₹34,000 partnership.'"
+            },
+            {
+              "objection": "'This has happened too many times — we're done'",
+              "response": "'You're absolutely right to feel that way. What I can do right now is assign a dedicated route monitor for every Urban Threads order and set up a weekly check-in so you have full visibility. Can we try that for 30 days?'"
+            },
+            {
+              "objection": "'I want a refund / compensation before we discuss anything else'",
+              "response": "'Absolutely — I'm authorising 15% credit on next month's invoices right now and you'll receive a written confirmation within the hour. Your trust is worth more than the invoice.'"
+            }
+          ],
+          "closer": "'Here's what happens next — I'll send you a written commitment letter by end of day, with your dedicated manager's direct line. You'll hear from [Manager Name] within 2 hours. Does that work for you?'"
+        },
+        {
+          "scenario": "De-escalation & Recovery",
+          "tone": "Calm · Validating · Action-Oriented",
+          "urgency": "HIGH",
+          "opener": "'Hello, this is [Agent Name] — I've been specifically briefed on the challenges Urban Threads has experienced with delivery issue. I'm not calling to apologise and disappear; I'm calling to fix this today.'",
+          "key_points": [
+            "Never interrupt — let the customer finish completely before speaking",
+            "Use name-matching language: mirror their key phrases to show you've listened",
+            "Replace passive language: swap 'I'll look into it' → 'I'm doing X right now'",
+            "Quantify acknowledgement: 'I can see 3 open tickets — I'm resolving all of them on this call'",
+            "Set a time-bound commitment: 'By [specific time today], you'll have [specific outcome]'",
+            "Do NOT offer generic apologies — be specific about what went wrong and what changes"
+          ],
+          "objection_handlers": [
+            {
+              "objection": "'Your company never follows through on promises'",
+              "response": "'That's a fair history to point to. This time I want to send you a written action plan with my name on it before we hang up — something concrete you can hold us to.'"
+            },
+            {
+              "objection": "'I want to speak to a manager / director immediately'",
+              "response": "'Of course — I'm connecting you with [Director Name] right after this call. While I have you, let me gather all the details so they're fully briefed and you don't have to repeat yourself.'"
+            }
+          ],
+          "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
+        }
+      ],
+      "analysed_at": "2026-03-28T14:17:33.386515Z"
+    }
+  ]
+}
