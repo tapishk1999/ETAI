@@ -30,6 +30,11 @@ body {
   font-family: "Manrope", sans-serif;
 }
 
+main {
+  display: grid;
+  gap: 18px;
+}
+
 button,
 input,
 select {
@@ -44,18 +49,29 @@ select {
 .topbar,
 .toolbar,
 .panel,
-.hero-card {
+.hero-card,
+.kpi,
+.detail-box,
+.account-row,
+.queue-card,
+.competitor-card,
+.motion-card,
+.architecture-card,
+.script-card,
+.deal-card,
+.kanban-column {
   background: rgba(255, 253, 248, 0.92);
   border: 1px solid rgba(220, 207, 188, 0.9);
   border-radius: 24px;
   box-shadow: var(--shadow);
+  min-width: 0;
 }
 
 .topbar {
   padding: 28px 32px;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 24px;
-  justify-content: space-between;
   align-items: start;
 }
 
@@ -96,6 +112,8 @@ h1 {
   display: grid;
   gap: 12px;
   justify-items: end;
+  align-content: start;
+  max-width: min(100%, 24rem);
 }
 
 .status-pill,
@@ -115,6 +133,8 @@ h1 {
 .status-pill {
   background: var(--accent-soft);
   color: var(--accent-strong);
+  text-align: right;
+  white-space: normal;
 }
 
 .ghost-link {
@@ -132,7 +152,7 @@ h1 {
 }
 
 .hero-grid {
-  grid-template-columns: 1.35fr 1fr;
+  grid-template-columns: minmax(0, 1.2fr) minmax(20rem, 0.8fr);
 }
 
 .hero-card {
@@ -230,7 +250,7 @@ h1 {
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   gap: 14px;
 }
 
@@ -262,7 +282,7 @@ h1 {
 }
 
 .overview-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
 }
 
 .panel {
@@ -279,7 +299,7 @@ h1 {
 
 .account-layout {
   display: grid;
-  grid-template-columns: 380px minmax(0, 1fr);
+  grid-template-columns: minmax(20rem, 23.75rem) minmax(0, 1fr);
   gap: 18px;
 }
 
@@ -331,7 +351,7 @@ h1 {
 }
 
 .row-bottom {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
 }
 
 .detail-top {
@@ -341,12 +361,12 @@ h1 {
 }
 
 .detail-meta {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
 }
 
 .detail-metrics,
 .metric-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 }
 
 .detail-box {
@@ -357,7 +377,7 @@ h1 {
 }
 
 .split-grid {
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
   margin-top: 18px;
 }
 
@@ -382,7 +402,7 @@ h1 {
 }
 
 .chip-row {
-  grid-template-columns: repeat(auto-fit, minmax(130px, max-content));
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
 }
 
 .chip {
@@ -422,7 +442,7 @@ h1 {
 }
 
 .kanban {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 }
 
 .kanban-column {
@@ -435,7 +455,7 @@ h1 {
 }
 
 .architecture-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 }
 
 .empty-state {
@@ -471,18 +491,35 @@ h1 {
 }
 
 canvas {
-  width: 100%;
+  display: block;
+  width: 100% !important;
+  height: 18rem !important;
+  max-height: 18rem;
+}
+
+#arcChart {
+  height: 14rem !important;
+  max-height: 14rem;
+}
+
+.chart-empty {
+  min-height: 14rem;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  border: 1px dashed var(--line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 248, 237, 0.7), rgba(255, 253, 248, 0.96));
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+canvas.is-hidden {
+  display: none !important;
 }
 
 @media (max-width: 1180px) {
-  .kpi-grid,
-  .detail-metrics,
-  .metric-grid,
-  .detail-meta,
-  .architecture-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .hero-grid,
   .overview-grid,
   .split-grid,
@@ -515,9 +552,45 @@ canvas {
 
   .status-stack {
     justify-items: start;
+    max-width: 100%;
   }
 
   .topbar {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .status-pill {
+    text-align: left;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .shell {
+    width: 100%;
+    margin: 0;
+  }
+
+  .topbar,
+  .toolbar,
+  .panel,
+  .hero-card,
+  .kpi {
+    box-shadow: none;
+    background: #fff;
+    break-inside: avoid;
+  }
+
+  .hero-grid,
+  .overview-grid,
+  .architecture-grid,
+  .account-layout,
+  .split-grid,
+  .kanban,
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
