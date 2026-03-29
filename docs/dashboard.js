@@ -476,7 +476,7 @@ function renderAccountDetail(account) {
             <h3>Customer call trajectory</h3>
           </div>
         </div>
-        <canvas id="arcChart" height="210"></canvas>
+        <div class="chart-wrap short"><canvas id="arcChart"></canvas></div>
       </div>
     </div>
 
