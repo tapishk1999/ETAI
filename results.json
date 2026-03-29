@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-28T14:17:33.387741Z",
+  "generated_at": "2026-03-29T16:29:45.244771Z",
   "total_customers": 6,
   "results": [
     {
@@ -146,6 +146,35 @@
         "confidence": 97,
         "reason": "Churn score 100/100 + compound -0.74 — active departure intent detected"
       },
+      "account_health": {
+        "score": 17,
+        "label": "Critical",
+        "color": "#c44536"
+      },
+      "business_impact": {
+        "annualized_revenue": 557600,
+        "revenue_at_risk": 557600,
+        "recovery_cost_estimate": 44608,
+        "net_retention_value": 512992,
+        "expansion_potential": 11152,
+        "roi_multiple": 11.5
+      },
+      "action_plan": {
+        "priority": "P1",
+        "owner": "Account Director",
+        "channel": "Phone + exec follow-up email",
+        "timeline": "Within 24 hours",
+        "playbook": "Recovery escalation",
+        "next_best_action": "Run an executive recovery call focused on billing / refund and issue a written service commitment.",
+        "rationale": "Churn score 100/100 · Churning · billing / refund"
+      },
+      "deal": {
+        "stage": "Critical",
+        "renewal_window_days": 14,
+        "health_score": 17,
+        "competitive_pressure": 0
+      },
+      "competitors": [],
       "radar": [
         {
           "metric": "Loyalty",
@@ -226,7 +255,7 @@
           "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
         }
       ],
-      "analysed_at": "2026-03-28T14:17:33.382931Z"
+      "analysed_at": "2026-03-29T16:29:45.243160Z"
     },
     {
       "customer_id": "C002",
@@ -376,6 +405,35 @@
         "confidence": 97,
         "reason": "Churn score 100/100 + compound -0.90 — active departure intent detected"
       },
+      "account_health": {
+        "score": 22,
+        "label": "Critical",
+        "color": "#c44536"
+      },
+      "business_impact": {
+        "annualized_revenue": 100800,
+        "revenue_at_risk": 100800,
+        "recovery_cost_estimate": 8064,
+        "net_retention_value": 92736,
+        "expansion_potential": 2016,
+        "roi_multiple": 11.5
+      },
+      "action_plan": {
+        "priority": "P1",
+        "owner": "Retention Lead",
+        "channel": "Phone + exec follow-up email",
+        "timeline": "Within 24 hours",
+        "playbook": "Recovery escalation",
+        "next_best_action": "Run an executive recovery call focused on delivery issue and issue a written service commitment.",
+        "rationale": "Churn score 100/100 · Churning · delivery issue"
+      },
+      "deal": {
+        "stage": "Critical",
+        "renewal_window_days": 14,
+        "health_score": 22,
+        "competitive_pressure": 0
+      },
+      "competitors": [],
       "radar": [
         {
           "metric": "Loyalty",
@@ -456,7 +514,7 @@
           "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
         }
       ],
-      "analysed_at": "2026-03-28T14:17:33.383786Z"
+      "analysed_at": "2026-03-29T16:29:45.243658Z"
     },
     {
       "customer_id": "C003",
@@ -606,6 +664,35 @@
         "confidence": 95,
         "reason": "Strong positive compound (0.98) and positive token ratio 92%"
       },
+      "account_health": {
+        "score": 100,
+        "label": "Healthy",
+        "color": "#0f9d7a"
+      },
+      "business_impact": {
+        "annualized_revenue": 1254000,
+        "revenue_at_risk": 11913,
+        "recovery_cost_estimate": 6000,
+        "net_retention_value": 5913,
+        "expansion_potential": 175560,
+        "roi_multiple": 1.0
+      },
+      "action_plan": {
+        "priority": "P3",
+        "owner": "Growth AE",
+        "channel": "Email + consultative call",
+        "timeline": "This week",
+        "playbook": "Expansion motion",
+        "next_best_action": "Pitch an expansion package with premium support, SLA analytics, and volume incentives.",
+        "rationale": "Churn score 1/100 · Highly Positive · positive feedback"
+      },
+      "deal": {
+        "stage": "Growth",
+        "renewal_window_days": 90,
+        "health_score": 100,
+        "competitive_pressure": 0
+      },
+      "competitors": [],
       "radar": [
         {
           "metric": "Loyalty",
@@ -662,7 +749,7 @@
           "closer": "'I'll send over the Platinum tier proposal with a 30-day trial option — no commitment, no pricing change until you decide. Does that sound fair?'"
         }
       ],
-      "analysed_at": "2026-03-28T14:17:33.384770Z"
+      "analysed_at": "2026-03-29T16:29:45.243968Z"
     },
     {
       "customer_id": "C004",
@@ -778,6 +865,35 @@
         "confidence": 97,
         "reason": "No strong sentiment signal detected — transactional / factual exchange"
       },
+      "account_health": {
+        "score": 61,
+        "label": "Watch",
+        "color": "#d48b1f"
+      },
+      "business_impact": {
+        "annualized_revenue": 100800,
+        "revenue_at_risk": 84420,
+        "recovery_cost_estimate": 6754,
+        "net_retention_value": 77666,
+        "expansion_potential": 2016,
+        "roi_multiple": 11.5
+      },
+      "action_plan": {
+        "priority": "P1",
+        "owner": "Retention Lead",
+        "channel": "Phone + exec follow-up email",
+        "timeline": "Within 24 hours",
+        "playbook": "Recovery escalation",
+        "next_best_action": "Run an executive recovery call focused on service reliability and issue a written service commitment.",
+        "rationale": "Churn score 100/100 · Neutral"
+      },
+      "deal": {
+        "stage": "Critical",
+        "renewal_window_days": 14,
+        "health_score": 61,
+        "competitive_pressure": 0
+      },
+      "competitors": [],
       "radar": [
         {
           "metric": "Loyalty",
@@ -834,7 +950,7 @@
           "closer": "'Here's what happens next — I'll send you a written commitment letter by end of day, with your dedicated manager's direct line. You'll hear from [Manager Name] within 2 hours. Does that work for you?'"
         }
       ],
-      "analysed_at": "2026-03-28T14:17:33.385077Z"
+      "analysed_at": "2026-03-29T16:29:45.244128Z"
     },
     {
       "customer_id": "C005",
@@ -984,6 +1100,41 @@
         "confidence": 97,
         "reason": "Churn score 100/100 + compound -0.99 — active departure intent detected"
       },
+      "account_health": {
+        "score": 0,
+        "label": "Critical",
+        "color": "#c44536"
+      },
+      "business_impact": {
+        "annualized_revenue": 686400,
+        "revenue_at_risk": 686400,
+        "recovery_cost_estimate": 54912,
+        "net_retention_value": 631488,
+        "expansion_potential": 13728,
+        "roi_multiple": 11.5
+      },
+      "action_plan": {
+        "priority": "P1",
+        "owner": "Account Director",
+        "channel": "Phone + exec follow-up email",
+        "timeline": "Within 24 hours",
+        "playbook": "Recovery escalation",
+        "next_best_action": "Run an executive recovery call focused on damage / loss and issue a written service commitment.",
+        "rationale": "Churn score 100/100 · Churning · damage / loss · competitor mention: QuickShip"
+      },
+      "deal": {
+        "stage": "Critical",
+        "renewal_window_days": 14,
+        "health_score": 0,
+        "competitive_pressure": 1
+      },
+      "competitors": [
+        {
+          "name": "QuickShip",
+          "count": 1,
+          "positioning": "same-day challenger"
+        }
+      ],
       "radar": [
         {
           "metric": "Loyalty",
@@ -1070,7 +1221,7 @@
           "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
         }
       ],
-      "analysed_at": "2026-03-28T14:17:33.385709Z"
+      "analysed_at": "2026-03-29T16:29:45.244483Z"
     },
     {
       "customer_id": "C006",
@@ -1218,6 +1369,35 @@
         "confidence": 97,
         "reason": "Churn score 100/100 + compound -0.99 — active departure intent detected"
       },
+      "account_health": {
+        "score": 0,
+        "label": "Critical",
+        "color": "#c44536"
+      },
+      "business_impact": {
+        "annualized_revenue": 136800,
+        "revenue_at_risk": 136800,
+        "recovery_cost_estimate": 10944,
+        "net_retention_value": 125856,
+        "expansion_potential": 2736,
+        "roi_multiple": 11.5
+      },
+      "action_plan": {
+        "priority": "P1",
+        "owner": "Retention Lead",
+        "channel": "Phone + exec follow-up email",
+        "timeline": "Within 24 hours",
+        "playbook": "Recovery escalation",
+        "next_best_action": "Run an executive recovery call focused on delivery issue and issue a written service commitment.",
+        "rationale": "Churn score 100/100 · Churning · delivery issue"
+      },
+      "deal": {
+        "stage": "Critical",
+        "renewal_window_days": 14,
+        "health_score": 0,
+        "competitive_pressure": 0
+      },
+      "competitors": [],
       "radar": [
         {
           "metric": "Loyalty",
@@ -1299,7 +1479,7 @@
           "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
         }
       ],
-      "analysed_at": "2026-03-28T14:17:33.386515Z"
+      "analysed_at": "2026-03-29T16:29:45.244766Z"
     }
   ]
 }
