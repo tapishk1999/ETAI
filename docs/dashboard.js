@@ -42,14 +42,25 @@ function bindEvents() {
 }
 
 async function loadPayload() {
+  if (window.__ETAI_RESULTS__?.results?.length) {
+    updateStatus("Loaded bundled dashboard snapshot.");
+    return window.__ETAI_RESULTS__;
+  }
+
+  const candidates = ["results.json", "./results.json", "../docs/results.json"];
   try {
-    const response = await fetch("results.json", { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+    for (const path of candidates) {
+      const response = await fetch(path, { cache: "no-store" });
+      if (response.ok) {
+        return await response.json();
+      }
     }
-    return await response.json();
+    throw new Error("No readable results.json found");
   } catch (error) {
-    updateStatus(`Dashboard data unavailable (${error.message}).`);
+    const localHint = window.location.protocol === "file:"
+      ? " Open the GitHub Pages link or serve the docs folder over HTTP."
+      : "";
+    updateStatus(`Dashboard data unavailable (${error.message}).${localHint}`);
     return { generated_at: null, results: [] };
   }
 }
@@ -699,8 +710,52 @@ function drawChart(canvasId, config) {
   const existing = state.charts[canvasId];
   if (existing) existing.destroy();
   const canvas = document.getElementById(canvasId);
-  if (!canvas || typeof Chart === "undefined") return;
+  if (!canvas) return;
+  clearChartMessage(canvas);
+
+  if (!chartHasData(config)) {
+    showChartMessage(canvas, "No data available for this view.");
+    return;
+  }
+
+  if (typeof Chart === "undefined") {
+    showChartMessage(canvas, "Chart library unavailable. Summary cards still reflect the live data.");
+    return;
+  }
+
+  canvas.classList.remove("is-hidden");
   state.charts[canvasId] = new Chart(canvas, config);
+}
+
+function chartHasData(config) {
+  const labels = config?.data?.labels || [];
+  const datasets = config?.data?.datasets || [];
+  if (!labels.length || !datasets.length) return false;
+
+  const values = datasets.flatMap((dataset) => Array.isArray(dataset.data) ? dataset.data : []);
+  if (!values.length) return false;
+
+  if (["doughnut", "pie", "polarArea"].includes(config.type)) {
+    return values.some((value) => Number(value || 0) > 0);
+  }
+
+  return values.some((value) => value !== null && value !== undefined);
+}
+
+function showChartMessage(canvas, message) {
+  canvas.classList.add("is-hidden");
+  const fallback = document.createElement("div");
+  fallback.className = "chart-empty";
+  fallback.textContent = message;
+  canvas.insertAdjacentElement("afterend", fallback);
+}
+
+function clearChartMessage(canvas) {
+  canvas.classList.remove("is-hidden");
+  const next = canvas.nextElementSibling;
+  if (next?.classList.contains("chart-empty")) {
+    next.remove();
+  }
 }
 
 function baseChartOptions(extra) {
