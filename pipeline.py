@@ -30,7 +30,7 @@ import sys
 import json
 import argparse
 import csv
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Dict, List, Optional
 
 # ── Import local modules ──────────────────────────────────────────────────────
@@ -42,6 +42,11 @@ from tfidf_extractor    import TFIDFExtractor
 from churn_model        import ChurnModel, CustomerFeatures
 from mood_classifier    import MoodClassifier, MoodInput
 from script_generator   import ScriptGenerator, ScriptContext
+
+
+def utc_now_iso() -> str:
+    """Return a timezone-aware UTC timestamp in ISO-8601 format."""
+    return datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
 
 # ── Data loaders ──────────────────────────────────────────────────────────────
@@ -68,6 +73,179 @@ def load_call_logs(path: str) -> Dict[str, str]:
                     f"{row['speaker']}: {row['line']}")
             transcripts.setdefault(cid, []).append(line)
     return {cid: "\n".join(lines) for cid, lines in transcripts.items()}
+
+
+COMPETITOR_SIGNALS = {
+    "QuickShip": "same-day challenger",
+    "BlueDart": "enterprise logistics incumbent",
+    "Delhivery": "national scale network",
+    "ShadowFleet": "regional low-cost carrier",
+}
+
+
+def resolve_repo_path(repo_root: str, raw_path: str, prefer_existing: bool = True) -> str:
+    """
+    Resolve a user-supplied path against the repo root.
+    Falls back between root-level and data/ copies so the pipeline can run
+    cleanly even if the dataset was duplicated during packaging.
+    """
+    if os.path.isabs(raw_path):
+        return raw_path
+
+    candidates = [
+        os.path.join(repo_root, raw_path),
+        os.path.join(repo_root, os.path.basename(raw_path)),
+        os.path.join(repo_root, "data", os.path.basename(raw_path)),
+    ]
+    if prefer_existing:
+        for candidate in candidates:
+            if os.path.exists(candidate):
+                return candidate
+    return candidates[0]
+
+
+def detect_competitors(transcript: str) -> List[dict]:
+    """Extract named competitor mentions from transcript text."""
+    lower = transcript.lower()
+    mentions = []
+    for name, positioning in COMPETITOR_SIGNALS.items():
+        hits = lower.count(name.lower())
+        if hits:
+            mentions.append({
+                "name": name,
+                "count": hits,
+                "positioning": positioning,
+            })
+    return mentions
+
+
+def build_account_health(customer: dict, sentiment, churn) -> dict:
+    """Blend CRM and NLP signals into a single health score."""
+    score = 100.0
+    score -= churn.score * 0.55
+    score -= int(customer.get("missed_deliveries", 0)) * 4.0
+    score -= int(customer.get("late_deliveries", 0)) * 2.0
+    score -= int(customer.get("open_tickets", 0)) * 3.0
+    score -= int(customer.get("payment_delays", 0)) * 2.5
+    score += float(customer.get("nps_score", 7.0)) * 2.2
+    score += sentiment.compound * 18.0
+    score = max(0, min(100, round(score)))
+
+    if score >= 76:
+        label, color = "Healthy", "#0f9d7a"
+    elif score >= 56:
+        label, color = "Watch", "#d48b1f"
+    elif score >= 36:
+        label, color = "Fragile", "#d25f3d"
+    else:
+        label, color = "Critical", "#c44536"
+
+    return {"score": score, "label": label, "color": color}
+
+
+def build_business_impact(customer: dict, sentiment, churn, mood_label: str) -> dict:
+    """Estimate retention upside and financial urgency from model output."""
+    contract_value = int(customer.get("contract_value", 0))
+    avg_order_value = int(customer.get("avg_order_value", 0))
+    orders = int(customer.get("orders", 0))
+    annualized_revenue = max(contract_value, avg_order_value * max(orders, 1) * 4)
+    urgency_boost = 1.08 if mood_label in {"Churning", "Angry"} else 1.0
+
+    revenue_at_risk = round(annualized_revenue * min(1.0, churn.probability * urgency_boost))
+    recovery_cost = round(max(6000, revenue_at_risk * (0.08 if churn.score >= 72 else 0.05 if churn.score >= 52 else 0.03)))
+    expansion_potential = round(
+        annualized_revenue * (
+            0.14 if churn.score < 30 and sentiment.compound > 0.25
+            else 0.08 if churn.score < 45
+            else 0.02
+        )
+    )
+    net_retention_value = max(0, revenue_at_risk - recovery_cost)
+    roi_multiple = round(net_retention_value / max(recovery_cost, 1), 1)
+
+    return {
+        "annualized_revenue": annualized_revenue,
+        "revenue_at_risk": revenue_at_risk,
+        "recovery_cost_estimate": recovery_cost,
+        "net_retention_value": net_retention_value,
+        "expansion_potential": expansion_potential,
+        "roi_multiple": roi_multiple,
+    }
+
+
+def build_action_plan(customer: dict, keywords, churn, mood, competitors: List[dict]) -> dict:
+    """Generate a structured next-best-action plan for the account team."""
+    contract_value = int(customer.get("contract_value", 0))
+    issue = keywords.topics[0] if keywords.topics else "service reliability"
+    has_competitor = bool(competitors)
+
+    if churn.score >= 72 or has_competitor:
+        priority = "P1"
+        owner = "Account Director" if contract_value >= 100000 else "Retention Lead"
+        channel = "Phone + exec follow-up email"
+        timeline = "Within 24 hours"
+        action = f"Run an executive recovery call focused on {issue} and issue a written service commitment."
+        playbook = "Recovery escalation"
+    elif churn.score >= 52:
+        priority = "P2"
+        owner = "Customer Success Manager"
+        channel = "Phone + Slack/CRM task"
+        timeline = "Within 48 hours"
+        action = f"Launch a proactive intervention plan around {issue} with weekly checkpoints and SLA reporting."
+        playbook = "Risk containment"
+    elif churn.score < 32 and mood.label in {"Positive", "Highly Positive"}:
+        priority = "P3"
+        owner = "Growth AE"
+        channel = "Email + consultative call"
+        timeline = "This week"
+        action = "Pitch an expansion package with premium support, SLA analytics, and volume incentives."
+        playbook = "Expansion motion"
+    else:
+        priority = "P3"
+        owner = "Account Manager"
+        channel = "Email + scheduled check-in"
+        timeline = "Within 5 business days"
+        action = "Run a structured health check, confirm open issues, and share a performance snapshot."
+        playbook = "Health review"
+
+    rationale_bits = [f"Churn score {churn.score}/100", mood.label]
+    if keywords.topics:
+        rationale_bits.append(keywords.topics[0])
+    if has_competitor:
+        rationale_bits.append(f"competitor mention: {competitors[0]['name']}")
+
+    return {
+        "priority": priority,
+        "owner": owner,
+        "channel": channel,
+        "timeline": timeline,
+        "playbook": playbook,
+        "next_best_action": action,
+        "rationale": " · ".join(rationale_bits),
+    }
+
+
+def build_deal_snapshot(churn_score: int, mood_label: str, competitors: List[dict], health_score: int) -> dict:
+    """Summarise the account as a live deal/renewal state."""
+    if churn_score >= 72 or competitors:
+        stage = "Critical"
+        renewal_window_days = 14
+    elif churn_score >= 52:
+        stage = "At Risk"
+        renewal_window_days = 30
+    elif churn_score < 32 and mood_label in {"Positive", "Highly Positive"}:
+        stage = "Growth"
+        renewal_window_days = 90
+    else:
+        stage = "Stable"
+        renewal_window_days = 60
+
+    return {
+        "stage": stage,
+        "renewal_window_days": renewal_window_days,
+        "health_score": health_score,
+        "competitive_pressure": len(competitors),
+    }
 
 
 # ── Core analysis function ────────────────────────────────────────────────────
@@ -161,6 +339,16 @@ def analyze_customer(
         anger_signals     = sentiment.anger_signals,
     )
     scripts = script_generator.generate(ctx)
+    competitors = detect_competitors(transcript)
+    account_health = build_account_health(customer, sentiment, churn)
+    business_impact = build_business_impact(customer, sentiment, churn, mood.label)
+    action_plan = build_action_plan(customer, keywords, churn, mood, competitors)
+    deal = build_deal_snapshot(
+        churn.score,
+        mood.label,
+        competitors,
+        account_health["score"],
+    )
 
     # ── Assemble radar metrics ──────────────────────────────────────────────
     orders     = int(customer.get("orders", 20))
@@ -197,12 +385,17 @@ def analyze_customer(
         # Model outputs
         "churn":          churn.to_dict(),
         "mood":           mood.to_dict(),
+        "account_health": account_health,
+        "business_impact": business_impact,
+        "action_plan":    action_plan,
+        "deal":           deal,
+        "competitors":    competitors,
         # Visualisation
         "radar":          radar,
         # Scripts
         "scripts":        [s.to_dict() for s in scripts],
         # Metadata
-        "analysed_at":    datetime.utcnow().isoformat() + "Z",
+        "analysed_at":    utc_now_iso(),
     }
 
 
@@ -243,6 +436,8 @@ def print_report(result: dict) -> None:
     print(f"  📝 Scripts    : {len(result['scripts'])} generated")
     for sc in result["scripts"]:
         print(f"     • {sc['scenario']}  [{sc['urgency']}]")
+    print(f"  🎯 Next Action: {result['action_plan']['next_best_action']}")
+    print(f"  💰 Revenue @ Risk: ₹{result['business_impact']['revenue_at_risk']:,}")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -273,9 +468,9 @@ def main():
     sg  = ScriptGenerator()
 
     # ── Load data ───────────────────────────────────────────────────────────
-    base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    customers_path = os.path.join(base, args.customers)
-    logs_path      = os.path.join(base, args.logs)
+    base = os.path.dirname(os.path.abspath(__file__))
+    customers_path = resolve_repo_path(base, args.customers, prefer_existing=True)
+    logs_path      = resolve_repo_path(base, args.logs, prefer_existing=True)
 
     if not os.path.exists(customers_path):
         print(f"ERROR: customers file not found: {customers_path}")
@@ -301,7 +496,7 @@ def main():
             continue
 
         transcript = override_transcript or transcripts.get(cid, "")
-        if not transcript.strip():
+        if not transcript.strip() and not args.quiet:
             print(f"INFO: No transcript found for {cid} — CRM-only analysis")
 
         result = analyze_customer(
@@ -319,18 +514,23 @@ def main():
             print_report(result)
 
     # ── Write JSON output ───────────────────────────────────────────────────
-    output_path = os.path.join(base, args.output)
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    payload = {
+        "generated_at": utc_now_iso(),
+        "total_customers": len(all_results),
+        "results": all_results,
+    }
+
+    output_path = resolve_repo_path(base, args.output, prefer_existing=False)
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(
-            {"generated_at": datetime.utcnow().isoformat() + "Z",
-             "total_customers": len(all_results),
-             "results": all_results},
-            f,
-            indent=2,
-            ensure_ascii=False,
-        )
+        json.dump(payload, f, indent=2, ensure_ascii=False)
+
+    dashboard_output = os.path.join(base, "docs", "results.json")
+    if os.path.abspath(output_path) != os.path.abspath(dashboard_output):
+        os.makedirs(os.path.dirname(dashboard_output), exist_ok=True)
+        with open(dashboard_output, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2, ensure_ascii=False)
 
     if not args.quiet:
         print(f"\n✅ Results written to: {output_path}")
