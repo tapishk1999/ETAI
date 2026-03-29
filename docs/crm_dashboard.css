@@ -26,6 +26,11 @@ body {
   font-family: "Manrope", sans-serif;
 }
 
+main {
+  display: grid;
+  gap: 18px;
+}
+
 button, input, select { font: inherit; }
 
 .shell {
@@ -33,17 +38,19 @@ button, input, select { font: inherit; }
   margin: 24px auto 48px;
 }
 
-.topbar, .toolbar, .panel {
+.topbar, .toolbar, .panel, .kpi, .agent-card, .queue-card, .account-card {
   background: rgba(255, 253, 249, 0.94);
   border: 1px solid var(--line);
   border-radius: 24px;
   box-shadow: var(--shadow);
+  min-width: 0;
 }
 
 .topbar {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 20px;
+  align-items: start;
   padding: 28px 32px;
 }
 
@@ -61,7 +68,7 @@ h1 { font-size: clamp(2rem, 3vw, 3rem); margin-bottom: 10px; }
 
 .subtitle, .tiny, .copy { color: var(--muted); line-height: 1.6; }
 
-.status-stack { display: grid; gap: 12px; justify-items: end; }
+.status-stack { display: grid; gap: 12px; justify-items: end; align-content: start; max-width: min(100%, 24rem); }
 
 .status-pill, .ghost-link, .badge, .score-chip {
   display: inline-flex;
@@ -73,7 +80,7 @@ h1 { font-size: clamp(2rem, 3vw, 3rem); margin-bottom: 10px; }
   font-weight: 700;
 }
 
-.status-pill { background: var(--accent-soft); color: var(--accent); }
+.status-pill { background: var(--accent-soft); color: var(--accent); text-align: right; white-space: normal; }
 .ghost-link { border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 
 .toolbar { margin-top: 18px; padding: 20px 22px; }
@@ -115,15 +122,8 @@ h1 { font-size: clamp(2rem, 3vw, 3rem); margin-bottom: 10px; }
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   gap: 14px;
-}
-
-.kpi, .agent-card, .queue-card, .account-card {
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  background: rgba(255, 253, 249, 0.94);
-  box-shadow: var(--shadow);
 }
 
 .kpi { padding: 18px; }
@@ -139,7 +139,7 @@ h1 { font-size: clamp(2rem, 3vw, 3rem); margin-bottom: 10px; }
 
 .grid-2 {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   gap: 18px;
   margin-top: 18px;
 }
@@ -172,11 +172,11 @@ h1 { font-size: clamp(2rem, 3vw, 3rem); margin-bottom: 10px; }
 }
 
 .row-bottom {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
 }
 
 .agent-meta {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
 }
 
 .score-chip { padding: 8px 12px; font-size: 12px; }
@@ -206,17 +206,50 @@ th {
   letter-spacing: 0.08em;
 }
 
-canvas { width: 100%; }
+canvas {
+  display: block;
+  width: 100% !important;
+  height: 18rem !important;
+  max-height: 18rem;
+}
+
+.chart-empty {
+  min-height: 14rem;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  border: 1px dashed var(--line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(247, 227, 216, 0.5), rgba(255, 253, 249, 0.98));
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+canvas.is-hidden {
+  display: none !important;
+}
 
 @media (max-width: 1180px) {
-  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid-2 { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 760px) {
   .shell { width: calc(100vw - 16px); margin: 8px auto 24px; }
   .topbar, .panel, .toolbar { padding: 18px; border-radius: 20px; }
-  .topbar { flex-direction: column; }
-  .status-stack { justify-items: start; }
+  .topbar { grid-template-columns: 1fr; }
+  .status-stack { justify-items: start; max-width: 100%; }
   .kpi-grid, .row-bottom, .agent-meta { grid-template-columns: 1fr; }
+  .status-pill { text-align: left; }
+}
+
+@media print {
+  body { background: #fff; }
+  .shell { width: 100%; margin: 0; }
+  .topbar, .toolbar, .panel, .kpi, .agent-card, .queue-card, .account-card {
+    box-shadow: none;
+    background: #fff;
+    break-inside: avoid;
+  }
+  .kpi-grid, .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
