@@ -2,419 +2,264 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SwiftRoute · Revenue Intelligence</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SwiftRoute · Revenue Intelligence Platform</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@400;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg:#080c10;--surface:#0d1520;--surface2:#0b1118;
-    --border:#192838;--text:#c8d8e8;--muted:#3d6070;--accent:#3b9ef0;
-    --orange:#f0a030;--green:#34d399;--red:#ef4444;--yellow:#fbbf24;
-  }
-  body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh}
-  ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-
-  /* Header */
-  .header{background:var(--surface2);border-bottom:1px solid var(--border);
-    padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100}
-  .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:#f0f4f8;display:flex;align-items:center;gap:10px}
-  .tag{font-size:10px;background:#0a2035;color:var(--accent);border:1px solid #1a4060;
-    border-radius:4px;padding:3px 8px;font-family:'IBM Plex Mono',monospace;letter-spacing:.1em}
-  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
-
-  /* Layout */
-  .layout{display:flex;height:calc(100vh - 54px)}
-  .sidebar{width:260px;background:var(--surface2);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
-  .main{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:18px}
-
-  /* Sidebar cards */
-  .sid-label{padding:16px 16px 8px;font-size:10px;color:#2d4a5a;letter-spacing:.12em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
-  .cust-card{padding:13px 16px;cursor:pointer;border-left:3px solid transparent;transition:all .15s}
-  .cust-card:hover{background:#101c28}
-  .cust-card.active{background:#101c28;border-left-color:var(--accent)}
-  .cust-name{font-weight:700;color:#8aaabb;font-size:13px}
-  .cust-card.active .cust-name{color:#e8f4ff}
-  .cust-meta{font-size:11px;color:#2d4a5a;margin:4px 0 8px}
-  .risk-bar-wrap{display:flex;align-items:center;gap:8px}
-  .risk-bar-bg{flex:1;height:3px;background:var(--border);border-radius:2px}
-  .risk-bar{height:100%;border-radius:2px;transition:width .4s}
-  .risk-val{font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:600}
-
-  /* Cards */
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
-  .section-label{font-size:10px;color:#3d5a70;letter-spacing:.12em;text-transform:uppercase;
-    font-family:'IBM Plex Mono',monospace;font-weight:600;margin-bottom:14px}
-  .pill{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700}
-  .pill-sm{padding:2px 8px;font-size:10px}
-
-  /* KPI row */
-  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .kpi{padding:14px 18px;border-radius:10px;background:#080c10;border-left:3px solid}
-  .kpi-value{font-size:52px;font-family:'Syne',sans-serif;font-weight:800;line-height:1}
-  .kpi-label{font-size:10px;color:var(--muted);margin-top:4px}
-  .kpi-sub{font-size:11px;margin-top:6px;font-family:'IBM Plex Mono',monospace}
-
-  /* Tabs */
-  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--border)}
-  .tab{padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;
-    border:none;border-bottom:2px solid transparent;color:var(--muted);transition:all .2s;font-family:inherit}
-  .tab.active{border-bottom-color:var(--accent);color:var(--accent)}
-  .pane{display:none;flex-direction:column;gap:16px}
-  .pane.active{display:flex}
-
-  /* Grids */
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-
-  /* Upload area */
-  .upload-area{border:1px dashed var(--border);border-radius:8px;padding:10px 16px;
-    font-size:12px;color:var(--muted);cursor:pointer;text-align:center;transition:.2s}
-  .upload-area:hover{border-color:var(--accent)}
-  .upload-area.drag{border-color:var(--orange);background:#1a200a}
-  textarea{width:100%;background:#080c10;border:1px solid var(--border);border-radius:8px;
-    padding:14px;color:#7aabb8;font-family:'IBM Plex Mono',monospace;font-size:12px;
-    resize:vertical;line-height:1.7;outline:none}
-
-  /* Button */
-  .btn{padding:11px 28px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;
-    border:none;background:linear-gradient(135deg,var(--accent),#1a6ab8);color:#fff;
-    letter-spacing:.03em;transition:all .2s;font-family:inherit}
-  .btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
-
-  /* Progress bar */
-  .progress-steps{display:flex;justify-content:center;gap:6px;margin-top:16px}
-  .step-dot{height:4px;border-radius:2px;background:var(--border);transition:all .3s}
-  .step-dot.done{background:var(--accent)}
-
-  /* Table */
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;padding:8px 10px;color:var(--muted);font-size:11px;
-    border-bottom:1px solid var(--border);font-weight:600;letter-spacing:.06em}
-  td{padding:10px;border-bottom:1px solid #0e1e2c}
-
-  /* Script cards */
-  .script-tabs{display:flex;gap:8px;flex-wrap:wrap}
-  .script-tab{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;
-    cursor:pointer;border:1px solid var(--border);background:transparent;
-    color:var(--muted);transition:all .2s;font-family:inherit}
-  .script-tab.active{border-color:var(--accent);background:#0f2a40;color:var(--accent)}
-  .objection-row{border-radius:8px;overflow:hidden;border:1px solid var(--border);margin-bottom:10px}
-  .obj-cust{background:#120a0a;padding:10px 14px;display:flex;gap:10px;align-items:flex-start}
-  .obj-agent{background:#080c18;padding:10px 14px;display:flex;gap:10px;align-items:flex-start}
-  .point-row{display:flex;gap:12px;align-items:flex-start;background:#080c10;
-    border-radius:8px;padding:10px 14px;margin-bottom:8px}
-  .point-num{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-weight:700;min-width:20px}
-
-  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-  .fadeup{animation:fadeUp .3s ease both}
-  .spin{animation:spin 1.2s linear infinite;display:inline-block}
-  .glow-red{text-shadow:0 0 30px #ef444460}
-  .glow-orange{text-shadow:0 0 30px #f9731660}
-  .glow-yellow{text-shadow:0 0 30px #fbbf2460}
-  .glow-green{text-shadow:0 0 30px #34d39960}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080c10;--s1:#0d1520;--s2:#0b1118;--border:#192838;--text:#c8d8e8;--muted:#3d6070;--accent:#3b9ef0;--green:#34d399;--red:#ef4444;--yellow:#fbbf24;--purple:#c084fc;--orange:#f0a030}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.app-nav{background:#060a0f;border-bottom:2px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:50px;position:sticky;top:0;z-index:200}
+.app-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#f0f4f8;display:flex;align-items:center;gap:8px}
+.app-tabs{display:flex;gap:3px}
+.at{padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;background:transparent;border:none;border-radius:6px;color:var(--muted);transition:all .2s;font-family:inherit;letter-spacing:.02em}
+.at.active{background:#1a3050;color:var(--accent)}
+.at:hover:not(.active){color:var(--text)}
+.crm-btn{font-size:11px;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;transition:.2s}
+.crm-btn:hover{color:var(--accent);border-color:var(--accent)}
+.module{display:none;height:calc(100vh - 50px)}
+.module.active{display:flex}
+/* Sidebar */
+.sidebar{width:248px;background:var(--s2);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;height:100%}
+.sidlabel{padding:14px 15px 6px;font-size:10px;color:#1e3a50;letter-spacing:.12em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.crow{padding:11px 15px;cursor:pointer;border-left:3px solid transparent;transition:all .15s}
+.crow:hover{background:#101c28}.crow.on{background:#101c28;border-left-color:var(--accent)}
+.cname{font-weight:700;font-size:12px;color:#7aabb8}.crow.on .cname{color:#e8f4ff}
+/* Main scroll areas */
+.mscroll{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:15px}
+/* Cards */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:18px}
+.sl{font-size:10px;color:#3d5a70;letter-spacing:.12em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;font-weight:600;margin-bottom:11px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+/* Pill */
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.psm{padding:2px 7px;font-size:10px}
+/* Sub-tabs */
+.stabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:0}
+.st{padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);transition:all .2s;font-family:inherit}
+.st.on{border-bottom-color:var(--accent);color:var(--accent)}
+.sp{display:none;flex-direction:column;gap:13px;padding-top:13px}
+.sp.on{display:flex}
+/* Upload */
+.uzone{border:1px dashed var(--border);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--muted);cursor:pointer;text-align:center;transition:.2s;margin-bottom:9px}
+.uzone:hover{border-color:var(--accent)}
+textarea{width:100%;background:#080c10;border:1px solid var(--border);border-radius:8px;padding:12px;color:#7aabb8;font-family:'IBM Plex Mono',monospace;font-size:12px;resize:vertical;line-height:1.7;outline:none}
+.btn{padding:10px 26px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;border:none;background:linear-gradient(135deg,var(--accent),#1a6ab8);color:#fff;letter-spacing:.03em;transition:all .2s;font-family:inherit}
+.btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
+.sbtn{padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:.2s}
+.sbtn.on{background:#0f2a40;border-color:var(--accent);color:var(--accent)}
+/* Script rows */
+.prow{display:flex;gap:11px;align-items:flex-start;background:#080c10;border-radius:7px;padding:9px 13px;margin-bottom:6px}
+.objbox{border-radius:7px;overflow:hidden;border:1px solid var(--border);margin-bottom:8px}
+.objc{background:#120a0a;padding:8px 13px;display:flex;gap:9px}
+.obja{background:#080c18;padding:8px 13px;display:flex;gap:9px}
+/* Risk bar */
+.rbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.rfill{height:100%;border-radius:2px}
+/* CI */
+.mrow{background:#080c10;border-radius:8px;padding:11px 15px;margin-bottom:7px;border-left:3px solid}
+/* Deal */
+.drow{background:#080c10;border-radius:9px;padding:14px 16px;margin-bottom:9px;border:1px solid var(--border);display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr 1fr 110px;gap:10px;align-items:center}
+.drow:hover{border-color:#2a4060}
+.hbar{height:5px;border-radius:3px;background:var(--border);overflow:hidden}
+.hfill{height:100%;border-radius:3px}
+/* Lead */
+.lcard{background:#080c10;border:1px solid var(--border);border-radius:9px;padding:15px 18px;margin-bottom:9px}
+.lcard:hover{border-color:#2a4060}
+.sring{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;flex-shrink:0}
+.sqstep{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--border)}
+.sqstep:last-child{border-bottom:none}
+.sqicon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.fu{animation:fadeUp .28s ease both}
+.spin{animation:spin 1.2s linear infinite;display:inline-block}
 </style>
 </head>
 <body>
 
-<!-- ── Header ── -->
-<header class="header">
-  <div class="logo">
-    <span>📡</span>
-    SwiftRoute <span style="color:var(--accent)">&nbsp;Revenue Intelligence</span>
-    <span class="tag">ML · NLP · STATIC</span>
+<nav class="app-nav">
+  <div class="app-logo">📡 SwiftRoute <span style="color:var(--accent);margin-left:4px">Intelligence Suite</span></div>
+  <div class="app-tabs">
+    <button class="at active" onclick="switchMod('ri')">⚡ Revenue Intelligence</button>
+    <button class="at" onclick="switchMod('ci')">🔍 Competitive Intel</button>
+    <button class="at" onclick="switchMod('di')">💼 Deal Intelligence</button>
+    <button class="at" onclick="switchMod('pr')">🎯 Prospecting Agent</button>
   </div>
-  <span class="mono">VADER · TF-IDF · Logistic Regression · Rule Classifier</span>
-</header>
+  <a class="crm-btn" href="crm_dashboard.html">🚛 CRM Dashboard →</a>
+</nav>
 
-<div class="layout">
-  <!-- ── Sidebar ── -->
-  <nav class="sidebar">
-    <div class="sid-label">Customer Accounts</div>
-    <div id="sidebar-customers"></div>
-  </nav>
-
-  <!-- ── Main content ── -->
-  <main class="main" id="main-content">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#2d4a5a">
-      <div style="font-size:52px">📡</div>
-      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#192838">Select a customer to begin</div>
-      <div style="font-size:13px">The ML pipeline analyses call logs + CRM features in real-time</div>
-    </div>
-  </main>
+<!-- M1: Revenue Intelligence -->
+<div class="module active" id="mod-ri">
+  <div class="sidebar"><div class="sidlabel">Customer Accounts</div><div id="ri-sb"></div></div>
+  <div class="mscroll" id="ri-main"><div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#1e3a50"><div style="font-size:48px">📡</div><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#192838">Select a customer to begin</div><div style="font-size:13px">VADER · TF-IDF · Logistic Regression · Rule Classifier</div></div></div>
 </div>
 
-<script>
-/* ═══════════════════════════════════════════════════════════════════════════
-   ①  EMBEDDED CRM DATA
-═══════════════════════════════════════════════════════════════════════════ */
-const CUSTOMERS = [
-  { id:"C001",name:"Apex Retail Co.",tier:"Gold",city:"Mumbai",orders:34,avg_order_value:4100,contract_value:142000,join_date:"2021-06",last_order:"2025-03-20",open_tickets:2,missed_deliveries:3,late_deliveries:5,payment_delays:1,nps_score:7 },
-  { id:"C002",name:"Neon Grocery Hub",tier:"Silver",city:"Delhi",orders:21,avg_order_value:1200,contract_value:25000,join_date:"2023-08",last_order:"2025-03-27",open_tickets:1,missed_deliveries:1,late_deliveries:4,payment_delays:2,nps_score:6 },
-  { id:"C003",name:"BlueCart Foods",tier:"Platinum",city:"Bangalore",orders:57,avg_order_value:5500,contract_value:310000,join_date:"2020-02",last_order:"2025-03-28",open_tickets:0,missed_deliveries:0,late_deliveries:1,payment_delays:0,nps_score:9 },
-  { id:"C005",name:"Spark Electronics",tier:"Gold",city:"Hyderabad",orders:44,avg_order_value:3900,contract_value:172000,join_date:"2022-04",last_order:"2025-03-25",open_tickets:4,missed_deliveries:6,late_deliveries:9,payment_delays:3,nps_score:5 },
-  { id:"C006",name:"Urban Threads",tier:"Silver",city:"Pune",orders:18,avg_order_value:1900,contract_value:34000,join_date:"2023-11",last_order:"2025-03-15",open_tickets:3,missed_deliveries:4,late_deliveries:7,payment_delays:4,nps_score:3 },
-];
+<!-- M2: Competitive Intel -->
+<div class="module" id="mod-ci"><div class="mscroll" id="ci-body"></div></div>
 
-const SAMPLE_LOGS = {
-  C001:`[2025-03-10 10:32] AGENT: Good morning, this is Ravi from SwiftRoute. Am I speaking with the operations team at Apex Retail?
-[2025-03-10 10:32] CUSTOMER: Yes, this is Dinesh. Look, I've been waiting for order ORD-1019 since yesterday morning. This is unacceptable.
-[2025-03-10 10:33] AGENT: I completely understand your frustration, Mr. Dinesh. Let me pull up that order right away.
-[2025-03-10 10:33] CUSTOMER: We had a product launch today and the display units haven't arrived. This is costing us money.
-[2025-03-10 10:35] CUSTOMER: I need some kind of compensation. This is the second time this month.
-[2025-03-10 10:36] CUSTOMER: Fine. But if this happens again we'll need to discuss our contract.`,
-  C003:`[2025-03-22 14:10] CUSTOMER: Oh hi Meera! Everything has been great. Your team is very reliable and consistent.
-[2025-03-22 14:11] CUSTOMER: That would be fantastic for us! We deal with perishables and faster delivery means less waste.
-[2025-03-22 14:13] CUSTOMER: What does that include? We're always looking to reduce logistics costs.
-[2025-03-22 14:14] CUSTOMER: Please send us the details. We'll almost certainly upgrade. Our CEO is very impressed with your service.`,
-  C005:`[2025-03-25 09:15] CUSTOMER: Issues? Six packages are missing or damaged. SIX. This is absolutely ridiculous.
-[2025-03-25 09:16] CUSTOMER: Your agents are careless. Electronics are fragile. We have lost clients because of you.
-[2025-03-25 09:18] CUSTOMER: I've sent them three times by email! Nobody reads anything here!
-[2025-03-25 09:20] CUSTOMER: If I don't have a resolution plan by Friday I'm moving to QuickShip. I've already had a call with them.
-[2025-03-25 09:22] CUSTOMER: Fine. But I am done being patient. This is your last chance.`,
-  C006:`[2025-03-27 16:05] CUSTOMER: Don't even start. The delivery failed again. I had customers waiting in store. This is a disaster.
-[2025-03-27 16:06] CUSTOMER: What happened is your company is completely incompetent. I want to cancel my contract now.
-[2025-03-27 16:07] CUSTOMER: Nothing at this point. I've been complaining since November. Zero improvement. It's pathetic.
-[2025-03-27 16:09] CUSTOMER: I'll take the call but I'm not promising anything. I'm already looking at competitors.
-[2025-03-27 16:10] CUSTOMER: Fine. But I've had enough. This is your absolute last chance with me.`,
-  C002:`[2025-03-20 11:30] CUSTOMER: Yes, the delivery was late again. This is the third time this month. I'm frustrated.
-[2025-03-20 11:31] CUSTOMER: The problem is reliability. We're a grocery hub timing is everything for us.
-[2025-03-20 11:33] CUSTOMER: That's what you said last time. I'm okay with giving it one more try but honestly I'm not happy.`,
+<!-- M3: Deal Intelligence -->
+<div class="module" id="mod-di"><div class="mscroll" id="di-body"></div></div>
+
+<!-- M4: Prospecting -->
+<div class="module" id="mod-pr"><div class="mscroll" id="pr-body"></div></div>
+
+<script>
+/* ── DATA ── */
+const CX=[
+  {id:"C001",name:"Apex Retail Co.",tier:"Gold",city:"Mumbai",orders:34,avg_order_value:4100,contract_value:142000,open_tickets:2,missed_deliveries:3,late_deliveries:5,payment_delays:1,nps_score:7},
+  {id:"C002",name:"Neon Grocery Hub",tier:"Silver",city:"Delhi",orders:21,avg_order_value:1200,contract_value:25000,open_tickets:1,missed_deliveries:1,late_deliveries:4,payment_delays:2,nps_score:6},
+  {id:"C003",name:"BlueCart Foods",tier:"Platinum",city:"Bangalore",orders:57,avg_order_value:5500,contract_value:310000,open_tickets:0,missed_deliveries:0,late_deliveries:1,payment_delays:0,nps_score:9},
+  {id:"C005",name:"Spark Electronics",tier:"Gold",city:"Hyderabad",orders:44,avg_order_value:3900,contract_value:172000,open_tickets:4,missed_deliveries:6,late_deliveries:9,payment_delays:3,nps_score:5},
+  {id:"C006",name:"Urban Threads",tier:"Silver",city:"Pune",orders:18,avg_order_value:1900,contract_value:34000,open_tickets:3,missed_deliveries:4,late_deliveries:7,payment_delays:4,nps_score:3},
+];
+const LOGS={
+  C001:`[10:32] AGENT: Good morning, this is Ravi from SwiftRoute.\n[10:32] CUSTOMER: I've been waiting for ORD-1019 since yesterday. This is unacceptable.\n[10:33] CUSTOMER: We had a product launch today and the display units haven't arrived. This is costing us money.\n[10:35] CUSTOMER: I need some kind of compensation. This is the second time this month.\n[10:36] CUSTOMER: Fine. But if this happens again we'll need to discuss our contract.`,
+  C002:`[11:30] CUSTOMER: Yes, the delivery was late again. This is the third time this month. I'm frustrated.\n[11:31] CUSTOMER: The problem is reliability. We're a grocery hub — timing is everything for us.\n[11:33] CUSTOMER: That's what you said last time. I'm not happy.`,
+  C003:`[14:10] CUSTOMER: Oh hi Meera! Everything has been great. Your team is very reliable and consistent.\n[14:11] CUSTOMER: That would be fantastic! We deal with perishables and faster delivery means less waste.\n[14:14] CUSTOMER: We'll almost certainly upgrade. Our CEO is very impressed with your service.`,
+  C005:`[09:15] CUSTOMER: Six packages are missing or damaged. SIX. This is absolutely ridiculous.\n[09:16] CUSTOMER: Your agents are careless. Electronics are fragile. We have lost clients because of you.\n[09:20] CUSTOMER: If I don't have a resolution by Friday I'm moving to QuickShip. I've already had a call with them.\n[09:22] CUSTOMER: I am done being patient. This is your last chance.`,
+  C006:`[16:05] CUSTOMER: The delivery failed again. This is a disaster.\n[16:06] CUSTOMER: Your company is completely incompetent. I want to cancel my contract now.\n[16:07] CUSTOMER: I've been complaining since November. Zero improvement. It's pathetic.\n[16:09] CUSTOMER: I'm not promising anything. I'm already looking at competitors.`,
 };
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ②  ML ENGINE — VADER Sentiment
-═══════════════════════════════════════════════════════════════════════════ */
-const LEXICON = {excellent:3.1,outstanding:3.2,fantastic:3.3,wonderful:3.0,amazing:3.2,perfect:3.0,great:2.5,love:2.8,happy:2.6,impressed:2.7,superb:3.1,reliable:2.4,consistent:2.2,professional:2.1,efficient:2.3,satisfied:2.4,pleased:2.3,delighted:3.0,appreciate:2.2,thankful:2.5,smooth:1.9,fast:1.8,quick:1.8,prompt:2.0,accurate:2.0,helpful:2.2,resolved:2.0,improved:1.9,better:1.7,upgrade:1.8,priority:1.5,recommend:2.3,trust:2.1,committed:1.9,transparent:2.0,proactive:2.1,certainly:1.5,definitely:1.4,ok:0.9,okay:0.9,fine:0.8,decent:1.0,acceptable:0.9,reasonable:1.0,interested:1.2,sure:0.7,good:1.8,late:-1.5,delay:-1.8,delayed:-1.8,slow:-1.3,issue:-1.2,problem:-1.4,concern:-1.1,complaint:-1.5,wrong:-1.3,error:-1.2,mistake:-1.2,disappointed:-2.0,unhappy:-1.9,damaged:-2.5,missing:-2.6,lost:-2.3,broken:-2.4,unacceptable:-2.8,terrible:-2.9,horrible:-3.0,awful:-3.0,disaster:-2.8,ridiculous:-2.7,furious:-3.1,angry:-2.9,frustrated:-2.5,useless:-2.8,incompetent:-2.9,careless:-2.5,disgraceful:-2.9,pathetic:-2.8,waste:-2.0,failed:-2.3,failure:-2.5,cancel:-2.0,quit:-1.9,switch:-1.7,rude:-2.5,ignored:-2.4,lawsuit:-3.0,refund:-1.5,compensation:-1.3,escalate:-1.6};
-const BOOSTERS = {very:1.3,really:1.2,extremely:1.5,absolutely:1.4,completely:1.4,totally:1.3,highly:1.2,quite:1.1,seriously:1.3,genuinely:1.1};
-const NEGATORS = new Set(["not","no","never","don't","didn't","won't","can't","couldn't","shouldn't","wouldn't","isn't","aren't","wasn't","weren't","hardly","barely"]);
-const CHURN_PHRASES = ["moving to","switching to","looking at other","already contacted","had a call with","cancel my contract","cancel contract","competitors","quickship","alternative","leaving"];
-const ANGER_PHRASES = ["ridiculous","unacceptable","disaster","furious","last chance","one chance","lost a client","costing us","nobody reads","rude","ignored","pathetic","incompetent","done being patient"];
-
-function tokenize(t){return t.toLowerCase().replace(/['']/g,"'").replace(/[^a-z0-9\s']/g," ").split(/\s+/).filter(Boolean)}
-
-function analyzeSentiment(text){
-  if(!text||!text.trim())return{compound:0,pos:0,neg:0,neu:1,churnSignals:0,angerSignals:0};
-  const tokens=tokenize(text), scores=[];
-  const low=text.toLowerCase();
-  let churnHits=0,angerHits=0;
-  CHURN_PHRASES.forEach(p=>{if(low.includes(p))churnHits++});
-  ANGER_PHRASES.forEach(p=>{if(low.includes(p))angerHits++});
+/* ── ML ENGINE ── */
+const LEX={excellent:3.1,outstanding:3.2,fantastic:3.3,wonderful:3.0,amazing:3.2,perfect:3.0,great:2.5,love:2.8,happy:2.6,impressed:2.7,superb:3.1,reliable:2.4,consistent:2.2,professional:2.1,efficient:2.3,satisfied:2.4,pleased:2.3,delighted:3.0,appreciate:2.2,thankful:2.5,smooth:1.9,fast:1.8,quick:1.8,prompt:2.0,accurate:2.0,helpful:2.2,resolved:2.0,improved:1.9,better:1.7,upgrade:1.8,priority:1.5,recommend:2.3,trust:2.1,committed:1.9,transparent:2.0,proactive:2.1,certainly:1.5,ok:0.9,okay:0.9,fine:0.8,decent:1.0,acceptable:0.9,sure:0.7,good:1.8,late:-1.5,delay:-1.8,delayed:-1.8,slow:-1.3,issue:-1.2,problem:-1.4,concern:-1.1,complaint:-1.5,wrong:-1.3,error:-1.2,mistake:-1.2,disappointed:-2.0,unhappy:-1.9,damaged:-2.5,missing:-2.6,lost:-2.3,broken:-2.4,unacceptable:-2.8,terrible:-2.9,horrible:-3.0,awful:-3.0,disaster:-2.8,ridiculous:-2.7,furious:-3.1,angry:-2.9,frustrated:-2.5,useless:-2.8,incompetent:-2.9,careless:-2.5,pathetic:-2.8,waste:-2.0,failed:-2.3,failure:-2.5,cancel:-2.0,quit:-1.9,switch:-1.7,rude:-2.5,ignored:-2.4,lawsuit:-3.0,refund:-1.5,compensation:-1.3,escalate:-1.6};
+const BOOST={very:1.3,really:1.2,extremely:1.5,absolutely:1.4,completely:1.4,totally:1.3,highly:1.2,quite:1.1,seriously:1.3,genuinely:1.1};
+const NEG=new Set(["not","no","never","don't","didn't","won't","can't","couldn't","shouldn't","wouldn't","isn't","aren't","wasn't","weren't","hardly","barely"]);
+const CHURN_P=["moving to","switching to","already contacted","had a call with","cancel my contract","cancel contract","competitors","quickship","bluedart","delhivery","alternative","leaving"];
+const ANGER_P=["ridiculous","unacceptable","disaster","furious","last chance","one chance","lost a client","costing us","nobody reads","rude","ignored","pathetic","incompetent","done being patient"];
+function tok(t){return t.toLowerCase().replace(/['']/g,"'").replace(/[^a-z0-9\s']/g," ").split(/\s+/).filter(Boolean)}
+function sent(text){
+  if(!text?.trim())return{compound:0,pos:0,neg:0,neu:1,cs:0,as_:0};
+  const tokens=tok(text),scores=[];
+  const low=text.toLowerCase();let cs=0,as_=0;
+  CHURN_P.forEach(p=>{if(low.includes(p))cs++});ANGER_P.forEach(p=>{if(low.includes(p))as_++});
   for(let i=0;i<tokens.length;i++){
-    const base=LEXICON[tokens[i]];
-    if(base==null)continue;
-    let negated=false;
-    for(let j=Math.max(0,i-3);j<i;j++)if(NEGATORS.has(tokens[j])){negated=true;break}
-    let boost=1;
-    for(let j=Math.max(0,i-2);j<i;j++)if(BOOSTERS[tokens[j]]){boost=BOOSTERS[tokens[j]];break}
-    let s=base*boost;
-    if(negated)s*=-0.74;
-    scores.push(s);
+    const base=LEX[tokens[i]];if(base==null)continue;
+    let ng=false;for(let j=Math.max(0,i-3);j<i;j++)if(NEG.has(tokens[j])){ng=true;break}
+    let bst=1;for(let j=Math.max(0,i-2);j<i;j++)if(BOOST[tokens[j]]){bst=BOOST[tokens[j]];break}
+    let s=base*bst;if(ng)s*=-0.74;scores.push(s);
   }
-  scores.push(...Array(churnHits).fill(-2.5));
-  scores.push(...Array(Math.min(angerHits,5)).fill(-1.2));
-  if(!scores.length)return{compound:0,pos:0,neg:0,neu:1,churnSignals:churnHits,angerSignals:angerHits};
-  const raw=scores.reduce((a,b)=>a+b,0);
-  const compound=Math.max(-1,Math.min(1,raw/Math.sqrt(raw*raw+15)));
-  const pos=scores.filter(s=>s>0).reduce((a,b)=>a+b,0);
-  const neg=Math.abs(scores.filter(s=>s<0).reduce((a,b)=>a+b,0));
-  const tot=pos+neg+1e-6;
-  return{compound,pos:pos/tot,neg:neg/tot,neu:Math.max(0,1-(pos+neg)/tot),churnSignals:churnHits,angerSignals:angerHits};
+  scores.push(...Array(cs).fill(-2.5));scores.push(...Array(Math.min(as_,5)).fill(-1.2));
+  if(!scores.length)return{compound:0,pos:0,neg:0,neu:1,cs,as_};
+  const raw=scores.reduce((a,b)=>a+b,0);const compound=Math.max(-1,Math.min(1,raw/Math.sqrt(raw*raw+15)));
+  const pos=scores.filter(s=>s>0).reduce((a,b)=>a+b,0);const negv=Math.abs(scores.filter(s=>s<0).reduce((a,b)=>a+b,0));
+  const tot=pos+negv+1e-6;
+  return{compound,pos:pos/tot,neg:negv/tot,neu:Math.max(0,1-(pos+negv)/tot),cs,as_};
 }
-
-function sentimentArc(text){
-  const lines=text.split("\n").filter(l=>/customer\s*:/i.test(l));
+function arc(text){
+  const lines=text.split("\n").filter(l=>/customer\s*:/i.test(l)||l.includes("CUSTOMER"));
   const src=lines.length?lines:text.split("\n").filter(Boolean);
   const seg=Math.max(1,Math.ceil(src.length/5));
-  return["Opening","Early","Mid","Late","Closing"].map((label,i)=>{
-    const chunk=src.slice(i*seg,(i+1)*seg).join(" ");
-    return{segment:label,score:Math.round(analyzeSentiment(chunk).compound*100)};
-  });
+  return["Opening","Early","Mid","Late","Closing"].map((label,i)=>({segment:label,score:Math.round(sent(src.slice(i*seg,(i+1)*seg).join(" ")).compound*100)}));
 }
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ③  TF-IDF TOPIC EXTRACTOR
-═══════════════════════════════════════════════════════════════════════════ */
-const STOPWORDS=new Set(["i","me","my","we","you","your","he","she","they","it","is","are","was","be","been","have","has","had","do","does","did","will","would","could","should","may","might","shall","can","the","a","an","and","or","but","in","on","at","to","for","of","with","this","that","from","by","as","so","if","am","up","out","about","into","just","our","us","let","get","got","ok","okay","right","well","yes","no","hi","hello","good","morning","afternoon","evening","thank","thanks","sure","really","very","oh","also","too","now","then","there","here","all","any","some","their","them","its","call","ll","m","s","re","ve","d","t","know","think","see","look","said","say","going","come","back","one","two","three","four","five","six","please","like","want","need","give","take","make","time"]);
-const IDF={damaged:2.8,missing:2.8,lost:2.5,broken:2.5,failed:2.4,unacceptable:2.6,cancel:3.0,switching:2.8,competitor:2.9,quickship:3.0,late:1.8,delay:1.9,delayed:1.9,reliability:1.8,escalate:2.2,manager:1.6,lawsuit:3.0,refund:2.2,compensation:1.9,upgrade:2.0,discount:1.9,excellent:1.8,fantastic:1.8,satisfied:1.7,delivery:0.7,order:0.7,package:0.9,route:1.0,agent:1.0,customer:0.5,service:0.6};
-const TOPICS={
-  "delivery issue":["delivery","deliver","undelivered","failed delivery","not delivered"],
-  "damage / loss":["damaged","broken","missing","lost","destroyed"],
-  "late arrival":["late","delay","delayed","slow","overdue"],
-  "agent complaint":["rude","unprofessional","careless","agent","driver"],
-  "billing / refund":["refund","compensation","invoice","billing","credit"],
-  "churn risk":["cancel","leave","switch","competitor","alternative","moving","quickship"],
-  "escalation":["escalate","manager","director","lawsuit","legal"],
-  "positive feedback":["great","excellent","happy","reliable","efficient","impressed","satisfied"],
-  "upsell opportunity":["upgrade","discount","tier","expand","volume","platinum"],
-  "resolution":["resolved","fixed","sorted","handled","addressed","solved"],
-};
-
-function extractKeywords(text){
-  const tokens=tokenize(text).filter(t=>t.length>3&&!STOPWORDS.has(t));
+const SW=new Set(["i","me","my","we","you","your","he","she","they","it","is","are","was","be","been","have","has","had","do","does","did","will","would","could","should","may","might","can","the","a","an","and","or","but","in","on","at","to","for","of","with","this","that","from","by","as","so","if","am","up","out","about","into","just","our","us","let","get","got","ok","okay","right","well","yes","no","hi","hello","good","morning","afternoon","evening","thank","thanks","sure","really","very","oh","also","too","now","then","there","here","all","any","some","their","them","its","call","know","think","see","look","said","say","going","come","back","one","two","three","please","like","want","need","make","time"]);
+const DIDF={damaged:2.8,missing:2.8,lost:2.5,broken:2.5,failed:2.4,unacceptable:2.6,cancel:3.0,switching:2.8,competitor:2.9,quickship:3.0,late:1.8,delay:1.9,delayed:1.9,reliability:1.8,escalate:2.2,manager:1.6,refund:2.2,compensation:1.9,upgrade:2.0,discount:1.9,excellent:1.8,fantastic:1.8,satisfied:1.7,delivery:0.7,order:0.7,package:0.9,route:1.0,agent:1.0};
+const TPCS={"delivery issue":["delivery","deliver","undelivered","not delivered"],"damage / loss":["damaged","broken","missing","lost","destroyed"],"late arrival":["late","delay","delayed","slow","overdue"],"agent complaint":["rude","unprofessional","careless","agent","driver"],"billing / refund":["refund","compensation","invoice","billing","credit"],"churn risk":["cancel","leave","switch","competitor","alternative","moving","quickship"],"escalation":["escalate","manager","director","lawsuit","legal"],"positive feedback":["great","excellent","happy","reliable","efficient","impressed","satisfied"],"upsell opportunity":["upgrade","discount","tier","expand","volume","platinum"]};
+function kw(text){
+  const tokens=tok(text).filter(t=>t.length>3&&!SW.has(t));
   const freq={};tokens.forEach(t=>freq[t]=(freq[t]||0)+1);
-  const total=tokens.length||1;
-  const scores={};
-  Object.entries(freq).forEach(([t,c])=>scores[t]=(c/total)*(IDF[t]||1.0));
+  const total=tokens.length||1;const scores={};Object.entries(freq).forEach(([t,c])=>scores[t]=(c/total)*(DIDF[t]||1.0));
   const ranked=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([t])=>t);
-  const low=text.toLowerCase();
-  const detectedTopics=[];
-  Object.entries(TOPICS).forEach(([topic,kws])=>{
-    if(kws.some(k=>low.includes(k)))detectedTopics.push(topic);
-  });
-  return{topTerms:ranked,topics:detectedTopics};
+  const low=text.toLowerCase();const dt=[];Object.entries(TPCS).forEach(([tp,ks])=>{if(ks.some(k=>low.includes(k)))dt.push(tp)});
+  return{topTerms:ranked,topics:dt};
 }
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ④  CHURN MODEL — Logistic Regression
-═══════════════════════════════════════════════════════════════════════════ */
-const TIER_BIAS={Platinum:-12,Gold:-6,Silver:0,Bronze:6};
-const WEIGHTS={missed_deliveries:0.65,late_deliveries:0.30,open_tickets:0.55,payment_delays:0.45,nps_inverse:0.40,order_velocity:0.04,call_sentiment:-2.20,churn_signals:1.10,anger_signals:0.40,tier_bias:0.10};
-const FEAT_LABELS={missed_deliveries:"Missed Deliveries",late_deliveries:"Late Deliveries",open_tickets:"Open Tickets",payment_delays:"Payment Delays",nps_inverse:"NPS (inverse)",order_velocity:"Order Velocity",call_sentiment:"Call Sentiment",churn_signals:"Churn Phrases",anger_signals:"Anger Phrases",tier_bias:"Customer Tier"};
-
-function sigmoid(x){return 1/(1+Math.exp(-x))}
-
-function predictChurn(c,sent){
-  const fv={missed_deliveries:c.missed_deliveries,late_deliveries:c.late_deliveries,open_tickets:c.open_tickets,payment_delays:c.payment_delays,nps_inverse:Math.max(0,10-c.nps_score),order_velocity:Math.max(0,60-c.orders),call_sentiment:sent.compound,churn_signals:sent.churnSignals,anger_signals:Math.min(sent.angerSignals,5),tier_bias:TIER_BIAS[c.tier]||0};
-  const weighted={};
-  Object.entries(fv).forEach(([k,v])=>weighted[k]=v*WEIGHTS[k]);
-  const linear=-2.1+Object.values(weighted).reduce((a,b)=>a+b,0);
-  const prob=sigmoid(linear);
+const TB={Platinum:-12,Gold:-6,Silver:0,Bronze:6};
+const WG={missed_deliveries:.65,late_deliveries:.30,open_tickets:.55,payment_delays:.45,nps_inverse:.40,order_velocity:.04,call_sentiment:-2.20,churn_signals:1.10,anger_signals:.40,tier_bias:.10};
+const FL={missed_deliveries:"Missed Deliveries",late_deliveries:"Late Deliveries",open_tickets:"Open Tickets",payment_delays:"Payment Delays",nps_inverse:"NPS (inverse)",order_velocity:"Order Velocity",call_sentiment:"Call Sentiment",churn_signals:"Churn Phrases",anger_signals:"Anger Phrases",tier_bias:"Customer Tier"};
+function sig(x){return 1/(1+Math.exp(-x))}
+function churnP(c,s){
+  const fv={missed_deliveries:c.missed_deliveries,late_deliveries:c.late_deliveries,open_tickets:c.open_tickets,payment_delays:c.payment_delays,nps_inverse:Math.max(0,10-c.nps_score),order_velocity:Math.max(0,60-c.orders),call_sentiment:s.compound,churn_signals:s.cs,anger_signals:Math.min(s.as_,5),tier_bias:TB[c.tier]||0};
+  const wt={};Object.entries(fv).forEach(([k,v])=>wt[k]=v*WG[k]);
+  const lin=-2.1+Object.values(wt).reduce((a,b)=>a+b,0);const prob=sig(lin);
   const score=Math.max(0,Math.min(100,Math.round(prob*130)));
   const label=score>=72?"Critical":score>=52?"High":score>=32?"Moderate":"Low";
   const color=score>=72?"#ef4444":score>=52?"#f97316":score>=32?"#fbbf24":"#34d399";
-  const totalAbs=Object.values(weighted).reduce((a,b)=>a+Math.abs(b),1e-9);
-  const importances=Object.entries(weighted).map(([k,v])=>({feature:FEAT_LABELS[k]||k,importance:Math.round(Math.abs(v)/totalAbs*100),direction:v>0?"risk":"protective"})).sort((a,b)=>b.importance-a.importance);
-  return{score,label,color,probability:prob,importances};
+  const ta=Object.values(wt).reduce((a,b)=>a+Math.abs(b),1e-9);
+  const imp=Object.entries(wt).map(([k,v])=>({feature:FL[k]||k,imp:Math.round(Math.abs(v)/ta*100),dir:v>0?"risk":"safe"})).sort((a,b)=>b.imp-a.imp);
+  return{score,label,color,prob,imp};
+}
+function mood(s,cs){
+  const c=s.compound;
+  if(cs>=70&&c<-0.30)return{label:"Churning",emoji:"🚨",color:"#ef4444"};
+  if(s.cs>=2&&c<-0.20)return{label:"Churning",emoji:"🚨",color:"#ef4444"};
+  if(c<-0.45||s.as_>=4)return{label:"Angry",emoji:"😡",color:"#f87171"};
+  if(c>0.45&&s.pos>0.55)return{label:"Highly Positive",emoji:"😊",color:"#34d399"};
+  if(c<-0.15||s.neg>0.55)return{label:"Frustrated",emoji:"😤",color:"#fb923c"};
+  if(c>0.15)return{label:"Positive",emoji:"🙂",color:"#6ee7b7"};
+  return{label:"Neutral",emoji:"😐",color:"#94a3b8"};
+}
+const TO=["Bronze","Silver","Gold","Platinum"];
+function nxt(t){const i=TO.indexOf(t);return TO[Math.min(i+1,3)]}
+function scripts(c,ch,md,k,s){
+  const sc=[];const issues=k.topics.filter(t=>!["positive feedback","upsell opportunity"].includes(t)).slice(0,2).join(" & ")||"service issues";
+  const credit=ch.score>=72?"15% credit on next invoice":"10% credit on next invoice";const nt=nxt(c.tier);
+  const sv=`₹${Math.round(c.contract_value*.08).toLocaleString("en-IN")}`;
+  if(ch.score>=40||["Churning","Angry"].includes(md.label)){
+    sc.push({scenario:"Retention & Win-Back",tone:"Empathetic · Accountable · Solution-First",urgency:ch.score>=72?"CRITICAL":ch.score>=52?"HIGH":"MEDIUM",opener:`"Good [morning/afternoon], this is [Agent] from SwiftRoute Priority Accounts. I'm calling specifically about ${c.name}'s account — I want to personally ensure we get you the resolution you deserve."`,pts:[`Acknowledge ${issues} without excuses — take immediate ownership`,`Reference: '${c.missed_deliveries} missed + ${c.late_deliveries} late is unacceptable for a ${c.tier} partner'`,"Propose 30-day SLA guarantee with breach penalties in your favour","Introduce a dedicated account manager as single point of contact",`Offer ${credit} as goodwill gesture`],ohs:[{o:`"I'm already talking to competitors"`,r:`"Before you decide, 15 minutes with our Ops Director to show changes for ${c.name}. We value this ₹${c.contract_value.toLocaleString("en-IN")} partnership."`},{o:`"This has happened too many times"`,r:`"You're right. I'm assigning a dedicated route monitor for every ${c.name} order and weekly check-ins for 30 days."`},{o:`"We want a refund first"`,r:`"Authorising ${credit} right now. Written confirmation within the hour."`}],closer:`"I'll send a written commitment letter by end of day with your dedicated manager's direct line."`});
+  }
+  if(["Angry","Frustrated","Churning"].includes(md.label)){
+    sc.push({scenario:"De-escalation & Recovery",tone:"Calm · Validating · Action-Oriented",urgency:md.label==="Angry"?"CRITICAL":"HIGH",opener:`"Hello, this is [Agent] — briefed on challenges ${c.name} has faced with ${issues}. I'm calling to fix this today, not just apologise."`,pts:["Never interrupt — let the customer finish completely","Mirror their key phrases to show genuine listening","Replace 'I'll look into it' with 'I'm doing X right now'",`"I see ${c.open_tickets} open tickets — resolving all on this call"`,"Set a time-bound commitment with a specific outcome"],ohs:[{o:`"Your company never follows through"`,r:`"I'll send a written action plan with my name on it before we hang up — something you can hold us to."`},{o:`"I want to speak to a manager"`,r:`"Connecting you with [Director] right after this call. Let me get the details so they're fully briefed."`}],closer:`"Thank you for giving SwiftRoute this chance. My direct line and action plan arrive in 10 minutes."`});
+  }
+  if(["Positive","Highly Positive"].includes(md.label)||ch.score<35){
+    sc.push({scenario:`Upsell to ${nt} Tier`,tone:"Consultative · Value-Led · Collaborative",urgency:"LOW",opener:`"Hi [Customer], this is [Agent] from SwiftRoute. I've been reviewing ${c.name}'s delivery patterns and spotted opportunities to make your logistics even more efficient — got 5 minutes?"`,pts:[`'${c.name} has completed ${c.orders} orders — top-performing ${c.city} segment'`,`You qualify for ${nt} tier — saving ${sv} annually`,"Same-day / cold-chain / time-slot delivery available as upgrade","Real-time tracking dashboard with custom SLA alerts — strong ROI"],ohs:[{o:`"We're happy with current setup"`,r:`"The upgrade doesn't change operations, just gives more protection and a lower unit cost per delivery."`},{o:`"Need procurement approval"`,r:`"I'll prepare a one-page ROI business case. Happy to join the presentation call."`}],closer:`"I'll send the ${nt} proposal with a 30-day trial — no commitment until you decide."`});
+  }
+  if(ch.score>=20&&ch.score<55&&sc.length<3){
+    sc.push({scenario:"Proactive Check-in",tone:"Warm · Forward-Looking",urgency:"LOW",opener:`"Hi [Customer], this is [Agent] from SwiftRoute — doing quarterly reviews for our ${c.tier} partners. Making sure everything with ${c.name} is running smoothly."`,pts:["Share a positive data point: 'Your on-time rate this quarter is [X]%'","Ask: 'Is there anything you'd want us to do differently?'","Offer a dedicated support hotline for faster resolution",`Mention ${c.name} is close to qualifying for ${nt} tier`],ohs:[{o:`"We've had a few issues"`,r:`"I'm glad you mentioned that — pulling those up right now so we can address each before I let you go."`}],closer:`"I'll follow up in 2 weeks. My direct line is here if anything comes up before then."`});
+  }
+  if(!sc.length)sc.push({scenario:"Proactive Check-in",tone:"Warm",urgency:"LOW",opener:`"Hi, this is [Agent] from SwiftRoute checking in on ${c.name}."`,pts:["Check service satisfaction","Share performance data","Offer support"],ohs:[],closer:`"Thank you — I'll follow up soon."`});
+  return sc;
+}
+function radar(c,s){
+  return[{m:"Loyalty",v:Math.min(100,Math.round(c.orders/60*100))},{m:"Satisfaction",v:Math.round(c.nps_score*10)},{m:"Engagement",v:Math.max(0,100-c.open_tickets*14)},{m:"Spend",v:Math.min(100,Math.round(c.avg_order_value/6000*100))},{m:"Sentiment",v:Math.round(((s.compound+1)/2)*100)},{m:"Reliability",v:Math.max(0,100-c.missed_deliveries*10-c.late_deliveries*5)}];
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑤  MOOD CLASSIFIER
-═══════════════════════════════════════════════════════════════════════════ */
-function classifyMood(sent,churnScore,openTickets){
-  const c=sent.compound,cs=sent.churnSignals,as_=sent.angerSignals,neg=sent.neg;
-  if(churnScore>=70&&c<-0.30)return{label:"Churning",emoji:"🚨",color:"#ef4444",confidence:90};
-  if(cs>=2&&c<-0.20)return{label:"Churning",emoji:"🚨",color:"#ef4444",confidence:82};
-  if(c<-0.45||as_>=4)return{label:"Angry",emoji:"😡",color:"#f87171",confidence:85};
-  if(c>0.45&&sent.pos>0.55)return{label:"Highly Positive",emoji:"😊",color:"#34d399",confidence:90};
-  if(c<-0.15||neg>0.55)return{label:"Frustrated",emoji:"😤",color:"#fb923c",confidence:75};
-  if(c>0.15)return{label:"Positive",emoji:"🙂",color:"#6ee7b7",confidence:72};
-  return{label:"Neutral",emoji:"😐",color:"#94a3b8",confidence:60};
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑥  SCRIPT GENERATOR
-═══════════════════════════════════════════════════════════════════════════ */
-const TIER_ORDER=["Bronze","Silver","Gold","Platinum"];
-function nextTier(tier){const i=TIER_ORDER.indexOf(tier);return TIER_ORDER[Math.min(i+1,3)]}
-
-function generateScripts(c,churn,mood,keywords,sent){
-  const scripts=[];
-  const issues=keywords.topics.filter(t=>!["positive feedback","upsell opportunity","resolution"].includes(t)).slice(0,2).join(" and ")||"recent service issues";
-  const credit=churn.score>=72?"15% credit on next month's invoices":churn.score>=52?"10% credit on next month's invoices":"a complimentary operations review";
-  const nt=nextTier(c.tier);
-  const savings=`₹${Math.round(c.contract_value*0.08).toLocaleString("en-IN")}`;
-
-  if(churn.score>=40||["Churning","Angry"].includes(mood.label)){
-    scripts.push({scenario:"Retention & Win-Back",tone:"Empathetic · Accountable · Solution-First",urgency:churn.score>=72?"CRITICAL":churn.score>=52?"HIGH":"MEDIUM",opener:`"Good [morning/afternoon], this is [Agent Name] from SwiftRoute's Priority Accounts team. I'm calling specifically about ${c.name}'s account — I want to personally ensure we get you the resolution you deserve."`,keyPoints:[`Acknowledge ${issues} without making excuses — take immediate ownership`,`Reference data: '${c.missed_deliveries} missed + ${c.late_deliveries} late deliveries is unacceptable for a ${c.tier} tier partner'`,"Propose a 30-day service guarantee with SLA breach penalties in the customer's favour","Introduce a dedicated account manager as single point of contact",`Offer ${credit} as goodwill gesture`],objectionHandlers:[{objection:`"I'm already looking at competitors"`,response:`"Before you decide, I'd like 15 minutes with our Operations Director to show you what changes we're making specifically for ${c.name}. We value this ₹${c.contract_value.toLocaleString("en-IN")} partnership."`},{objection:`"This has happened too many times"`,response:`"You're right. I'm assigning a dedicated route monitor for every ${c.name} order, plus a weekly check-in for 30 days. Can we try that?""`},{objection:`"We want a refund first"`,response:`"Authorising ${credit} right now. Written confirmation within the hour."`}],closer:`"I'll send a written commitment letter by end of day with your dedicated manager's direct line. You'll hear from [Manager Name] within 2 hours."`});
-  }
-  if(["Angry","Frustrated","Churning"].includes(mood.label)){
-    scripts.push({scenario:"De-escalation & Recovery",tone:"Calm · Validating · Action-Oriented",urgency:mood.label==="Angry"?"CRITICAL":"HIGH",opener:`"Hello, this is [Agent Name] — I've been briefed on the challenges ${c.name} has faced with ${issues}. I'm not calling to apologise and disappear; I'm calling to fix this today."`,keyPoints:["Never interrupt — let the customer finish completely before responding","Mirror their key phrases to show you've truly listened","Replace 'I'll look into it' with 'I'm doing X right now'",`"I can see ${c.open_tickets} open tickets — I'm resolving all of them on this call"`,"Set a time-bound commitment: 'By [specific time], you'll have [specific outcome]'"],objectionHandlers:[{objection:`"Your company never follows through"`,response:`"This time I'll send you a written action plan with my name on it before we hang up — something you can hold us to."`},{objection:`"I want to speak to a manager"`,response:`"Of course — I'm connecting you with [Director Name] right after this call. Let me get the details first so they're fully briefed."`}],closer:`"Thank you for giving SwiftRoute this chance. My direct line and the action plan arrive in 10 minutes. You will see a change."`});
-  }
-  if(["Positive","Highly Positive"].includes(mood.label)||churn.score<35){
-    scripts.push({scenario:`Upsell to ${nt} Tier`,tone:"Consultative · Value-Led · Collaborative",urgency:"LOW",opener:`"Hi [Customer Name], this is [Agent Name] from SwiftRoute. I've been reviewing ${c.name}'s delivery patterns and spotted opportunities to make your logistics even more efficient — got 5 minutes?"`,keyPoints:[`'${c.name} has completed ${c.orders} orders — you're in our top-performing ${c.city} segment'`,`You qualify for ${nt} tier — saving ${savings} annually`,`Same-day / cold-chain / time-slot delivery available as an upgrade`,`Real-time tracking dashboard with custom SLA alerts — strong operational ROI`,`Your ₹${c.contract_value.toLocaleString("en-IN")} contract qualifies for enhanced SLA`],objectionHandlers:[{objection:`"We're happy with the current setup"`,response:`"Great — the upgrade doesn't change operations, just gives more protection and a lower unit cost. No disruption, just more value."`},{objection:`"We need procurement approval"`,response:`"I'll prepare a one-page ROI business case. Would it help if I joined the presentation call?"`}],closer:`"I'll send the ${nt} proposal with a 30-day trial — no commitment until you decide. Sound fair?"`});
-  }
-  if(churn.score>=20&&churn.score<55&&scripts.length<3){
-    scripts.push({scenario:"Proactive Check-in",tone:"Warm · Informative · Forward-Looking",urgency:"LOW",opener:`"Hi [Customer Name], this is [Agent Name] from SwiftRoute — doing quarterly reviews for our ${c.tier} partners. Just making sure everything with ${c.name} is running smoothly."`,keyPoints:["Share a positive data point: 'Your on-time rate this quarter is [X]%'","Ask: 'Is there anything you'd want us to do differently?'",`Introduce a new feature relevant to ${c.city}`,`Mention ${c.name} is close to qualifying for ${nt} tier benefits`,"Offer a dedicated support hotline number"],objectionHandlers:[{objection:`"We've had a few issues recently"`,response:`"I'm glad you mentioned that — pulling those incidents up right now so we can address each before I let you go."`}],closer:`"I'll follow up in 2 weeks. My direct line is here if anything comes up before then."`});
-  }
-  if(!scripts.length){scripts.push({scenario:"Proactive Check-in",tone:"Warm",urgency:"LOW",opener:`"Hi, this is [Agent Name] from SwiftRoute checking in on ${c.name}."`,keyPoints:["Check service satisfaction","Share performance data","Offer support"],objectionHandlers:[],closer:`"Thank you for your time — I'll follow up soon."`})}
-  return scripts;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑦  RADAR DATA BUILDER
-═══════════════════════════════════════════════════════════════════════════ */
-function buildRadar(c,sent){
-  return[
-    {metric:"Loyalty",value:Math.min(100,Math.round(c.orders/60*100))},
-    {metric:"Satisfaction",value:Math.round(c.nps_score*10)},
-    {metric:"Engagement",value:Math.max(0,100-c.open_tickets*14)},
-    {metric:"Spend",value:Math.min(100,Math.round(c.avg_order_value/6000*100))},
-    {metric:"Sentiment",value:Math.round(((sent.compound+1)/2)*100)},
-    {metric:"Reliability",value:Math.max(0,100-c.missed_deliveries*10-c.late_deliveries*5)},
-  ];
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑧  QUICK CHURN (sidebar, no transcript)
-═══════════════════════════════════════════════════════════════════════════ */
-function quickChurn(c){return predictChurn(c,{compound:0,churnSignals:0,angerSignals:0}).score}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑨  UI HELPERS
-═══════════════════════════════════════════════════════════════════════════ */
-const TIER_COLOR={Platinum:"#e5c87a",Gold:"#f0a500",Silver:"#94a3b8",Bronze:"#cd7f32"};
-function churnColor(s){return s>=72?"#ef4444":s>=52?"#f97316":s>=32?"#fbbf24":"#34d399"}
-function pill(label,color,sm=""){return`<span class="pill ${sm}" style="color:${color};border:1px solid ${color}44;background:${color}14">${label}</span>`}
-function urgColor(u){return{CRITICAL:"#ef4444",HIGH:"#f97316",MEDIUM:"#fbbf24",LOW:"#34d399"}[u]||"#94a3b8"}
+/* ── UI HELPERS ── */
+const TC={Platinum:"#e5c87a",Gold:"#f0a500",Silver:"#94a3b8",Bronze:"#cd7f32"};
+function cc(s){return s>=72?"#ef4444":s>=52?"#f97316":s>=32?"#fbbf24":"#34d399"}
+function pill(l,c,sm=""){return`<span class="pill ${sm}" style="color:${c};border:1px solid ${c}44;background:${c}14">${l}</span>`}
+function uc(u){return{CRITICAL:"#ef4444",HIGH:"#f97316",MEDIUM:"#fbbf24",LOW:"#34d399"}[u]||"#94a3b8"}
 function fmt(n){return Number(n).toLocaleString("en-IN")}
+const CR={};
+function dC(k){if(CR[k]){CR[k].destroy();delete CR[k]}}
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑩  STATE
-═══════════════════════════════════════════════════════════════════════════ */
-let activeCustomer=null, activeResult=null, activeTab="overview", activeScript=0;
-let chartInstances={};
+/* ── MODULE SWITCHING ── */
+function switchMod(id){
+  document.querySelectorAll(".at").forEach((t,i)=>{const ids=["ri","ci","di","pr"];t.classList.toggle("active",ids[i]===id)});
+  document.querySelectorAll(".module").forEach(m=>m.classList.toggle("active",m.id==="mod-"+id));
+  if(id==="ci")renderCI();if(id==="di")renderDI();if(id==="pr")renderPR();
+}
 
-function destroyCharts(){Object.values(chartInstances).forEach(c=>c.destroy());chartInstances={}}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑪  SIDEBAR RENDER
-═══════════════════════════════════════════════════════════════════════════ */
-function renderSidebar(){
-  const container=document.getElementById("sidebar-customers");
-  container.innerHTML=CUSTOMERS.map(c=>{
-    const qs=quickChurn(c),cc=churnColor(qs);
-    return`<div class="cust-card${activeCustomer?.id===c.id?" active":""}" onclick="selectCustomer('${c.id}')">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <span class="cust-name">${c.name}</span>${pill(c.tier,TIER_COLOR[c.tier],"pill-sm")}
-      </div>
-      <div class="cust-meta">📍 ${c.city} · ${c.orders} orders</div>
-      <div class="risk-bar-wrap">
-        <div class="risk-bar-bg"><div class="risk-bar" style="width:${qs}%;background:${cc}"></div></div>
-        <span class="risk-val" style="color:${cc}">${qs}</span>
-      </div>
-      <div style="font-size:9px;color:#2d4a5a;margin-top:3px;font-family:'IBM Plex Mono',monospace">CRM churn index</div>
+/* ══ MODULE 1: REVENUE INTELLIGENCE ══ */
+let AC=null,AR=null,AT="overview",ASC=0;
+function qc(c){return churnP(c,{compound:0,cs:0,as_:0}).score}
+function renderSB(){
+  document.getElementById("ri-sb").innerHTML=CX.map(c=>{
+    const qs=qc(c),col=cc(qs);
+    return`<div class="crow${AC?.id===c.id?" on":""}" onclick="selRI('${c.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">${pill(c.name.split(" ").slice(0,2).join(" "),AC?.id===c.id?"#e8f4ff":"#7aabb8","psm").replace('class="pill psm"','style="font-weight:700;font-size:12px"')}${pill(c.tier,TC[c.tier],"psm")}</div>
+      <div style="font-size:11px;color:#1e3a50;margin:4px 0 7px">📍 ${c.city} · ${c.orders} orders</div>
+      <div style="display:flex;align-items:center;gap:7px"><div class="rbar" style="flex:1"><div class="rfill" style="width:${qs}%;background:${col}"></div></div><span style="font-size:10px;color:${col};font-family:'IBM Plex Mono',monospace;font-weight:600">${qs}</span></div>
+      <div style="font-size:9px;color:#1e3a50;margin-top:3px;font-family:'IBM Plex Mono',monospace">CRM churn index</div>
     </div>`;
   }).join("");
 }
+renderSB();
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑫  SELECT CUSTOMER
-═══════════════════════════════════════════════════════════════════════════ */
-function selectCustomer(id){
-  activeCustomer=CUSTOMERS.find(c=>c.id===id);
-  activeResult=null; activeTab="overview"; activeScript=0;
-  renderSidebar();
-  renderCustomerView();
-}
-
-function renderCustomerView(){
-  const c=activeCustomer;
-  const log=SAMPLE_LOGS[c.id]||"";
-  document.getElementById("main-content").innerHTML=`
-    <div class="card fadeup" style="display:flex;gap:16px;align-items:flex-start">
-      <div style="width:50px;height:50px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,#3b9ef0,#1a5fa0);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:#fff">${c.name.slice(0,2).toUpperCase()}</div>
+function selRI(id){
+  AC=CX.find(c=>c.id===id);AR=null;AT="overview";ASC=0;renderSB();
+  const c=AC,log=LOGS[c.id]||"";
+  document.getElementById("ri-main").innerHTML=`
+    <div class="card fu" style="display:flex;gap:14px;align-items:flex-start">
+      <div style="width:46px;height:46px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),#1a5fa0);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff">${c.name.slice(0,2).toUpperCase()}</div>
       <div style="flex:1">
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#f0f4f8">${c.name}</span>
-          ${pill(c.tier,TIER_COLOR[c.tier])}
-          <span style="font-size:11px;color:#2d4a5a;font-family:'IBM Plex Mono',monospace">${c.id}</span>
+        <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+          <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#f0f4f8">${c.name}</span>${pill(c.tier,TC[c.tier])}<span style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace">${c.id}</span>
         </div>
-        <div style="display:flex;gap:18px;margin-top:8px;font-size:12px;color:#3d6070;flex-wrap:wrap">
+        <div style="display:flex;gap:14px;margin-top:7px;font-size:12px;color:#3d6070;flex-wrap:wrap">
           <span>📍 ${c.city}</span><span>📦 ${c.orders} orders</span><span>💰 ₹${fmt(c.contract_value)}</span><span>⭐ NPS ${c.nps_score}/10</span>
           <span style="color:${c.open_tickets>2?"#f97316":"#3d6070"}">🎫 ${c.open_tickets} tickets</span>
           <span style="color:${c.missed_deliveries>3?"#ef4444":"#3d6070"}">❌ ${c.missed_deliveries} missed</span>
@@ -422,273 +267,221 @@ function renderCustomerView(){
         </div>
       </div>
     </div>
-    <div class="card fadeup" style="animation-delay:.05s">
-      <div class="section-label">📞 Call Log Input</div>
-      <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
-        <input type="file" id="file-input" accept=".txt,.log" style="display:none" onchange="handleFile(event)"/>
-        Drop a <span style="color:var(--accent);font-family:'IBM Plex Mono',monospace">.txt / .log</span> call transcript, or <span style="color:var(--accent)">click to upload</span>
-      </div>
-      <textarea id="call-log" rows="6" placeholder="Paste or upload call transcript…">${log}</textarea>
-      <div style="display:flex;justify-content:flex-end;margin-top:12px">
-        <button class="btn" onclick="runPipeline()">▶ Run ML Pipeline</button>
-      </div>
+    <div class="card">
+      <div class="sl">📞 Call Log Input</div>
+      <div class="uzone" onclick="document.getElementById('rif').click()" ondragover="event.preventDefault()" ondrop="riDrop(event)"><input type="file" id="rif" accept=".txt,.log" style="display:none" onchange="riFile(event)"/>Drop a <span style="color:var(--accent);font-family:'IBM Plex Mono',monospace">.txt/.log</span> call transcript or <span style="color:var(--accent)">click to upload</span></div>
+      <textarea id="ri-log" rows="5" placeholder="Paste or upload call transcript…">${log}</textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:11px"><button class="btn" onclick="runRI()">▶ Run ML Pipeline</button></div>
     </div>
-    <div id="pipeline-output"></div>
-  `;
+    <div id="ri-out"></div>`;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑬  FILE HANDLING
-═══════════════════════════════════════════════════════════════════════════ */
-function handleFile(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>document.getElementById("call-log").value=ev.target.result;r.readAsText(file)}
-function handleDrop(e){e.preventDefault();document.getElementById("upload-area").classList.remove("drag");const file=e.dataTransfer.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>document.getElementById("call-log").value=ev.target.result;r.readAsText(file)}
+function riFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const el=document.getElementById("ri-log");if(el)el.value=ev.target.result};r.readAsText(f)}
+function riDrop(e){e.preventDefault();riFile({target:{files:e.dataTransfer.files}})}
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑭  PIPELINE RUNNER
-═══════════════════════════════════════════════════════════════════════════ */
-const STEPS=["Tokenising transcript…","Running VADER sentiment analysis…","Extracting TF-IDF keywords…","Scoring churn features (logistic regression)…","Classifying customer mood…","Generating dynamic scripts…","Building visualisations…"];
-
-async function runPipeline(){
-  const log=document.getElementById("call-log")?.value||"";
-  if(!activeCustomer)return;
-  destroyCharts();
-  const out=document.getElementById("pipeline-output");
-  out.innerHTML=`<div class="card" style="text-align:center;padding:36px">
-    <div class="spin" style="font-size:30px;display:block">⚙</div>
-    <div id="step-msg" style="font-family:'IBM Plex Mono',monospace;color:var(--accent);font-size:13px;margin:14px 0 16px">${STEPS[0]}</div>
-    <div class="progress-steps">${STEPS.map((_,i)=>`<div class="step-dot" id="dot-${i}" style="width:${i===0?24:8}px"></div>`).join("")}</div>
-  </div>`;
-
-  for(let i=0;i<STEPS.length;i++){
-    await new Promise(r=>setTimeout(r,280));
-    const msg=document.getElementById("step-msg");
-    if(msg)msg.textContent=STEPS[i];
-    for(let j=0;j<=i;j++){const d=document.getElementById(`dot-${j}`);if(d){d.classList.add("done");d.style.width="24px"}}
-  }
-
-  const sent=analyzeSentiment(log);
-  const arc=sentimentArc(log);
-  const kw=extractKeywords(log);
-  const churn=predictChurn(activeCustomer,sent);
-  const mood=classifyMood(sent,churn.score,activeCustomer.open_tickets);
-  const radar=buildRadar(activeCustomer,sent);
-  const scripts=generateScripts(activeCustomer,churn,mood,kw,sent);
-
-  activeResult={sent,arc,kw,churn,mood,radar,scripts};
-  activeTab="overview"; activeScript=0;
-  renderResults();
+const STEPS=["Tokenising transcript…","Running VADER sentiment…","Extracting TF-IDF keywords…","Scoring churn (logistic regression)…","Classifying mood…","Generating scripts…","Building visualisations…"];
+async function runRI(){
+  if(!AC)return;const log=document.getElementById("ri-log")?.value||"";
+  const out=document.getElementById("ri-out");Object.keys(CR).forEach(k=>dC(k));
+  out.innerHTML=`<div class="card" style="text-align:center;padding:30px"><div class="spin" style="font-size:26px">⚙</div><div id="ri-step" style="font-family:'IBM Plex Mono',monospace;color:var(--accent);font-size:12px;margin:11px 0 15px">${STEPS[0]}</div><div style="display:flex;justify-content:center;gap:4px">${STEPS.map((_,i)=>`<div id="sd${i}" style="height:4px;border-radius:2px;background:var(--border);width:${i===0?22:7}px;transition:all .3s"></div>`).join("")}</div></div>`;
+  for(let i=0;i<STEPS.length;i++){await new Promise(r=>setTimeout(r,220));const m=document.getElementById("ri-step");if(m)m.textContent=STEPS[i];for(let j=0;j<=i;j++){const d=document.getElementById(`sd${j}`);if(d){d.style.background="var(--accent)";d.style.width="22px"}}}
+  const s=sent(log);const a=arc(log);const k=kw(log);const ch=churnP(AC,s);const md=mood(s,ch.score);const rd=radar(AC,s);const scs=scripts(AC,ch,md,k,s);
+  AR={s,a,k,ch,md,rd,scs};AT="overview";ASC=0;renderRI();
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑮  RENDER RESULTS
-═══════════════════════════════════════════════════════════════════════════ */
-function renderResults(){
-  if(!activeResult)return;
-  const{sent,arc,kw,churn,mood,radar,scripts}=activeResult;
-  const c=activeCustomer;
+function renderRI(){
+  if(!AR)return;const{s,a,k,ch,md,rd,scs}=AR;const c=AC;
+  const tabs=[["overview","📊 Overview"],["sentiment","🧠 NLP"],["churn","⚠️ Churn"],["scripts","🗣️ Scripts"]];
+  const tb=`<div class="stabs">${tabs.map(([id,l])=>`<button class="st${AT===id?" on":""}" onclick="swRT('${id}')">${l}</button>`).join("")}</div>`;
 
-  const tabBar=`<div class="tabs" id="tab-bar">
-    ${[["overview","📊 Overview"],["sentiment","🧠 NLP Sentiment"],["churn","⚠️ Churn Model"],["scripts","🗣️ Scripts"]].map(([id,label])=>`<button class="tab${activeTab===id?" active":""}" onclick="switchTab('${id}')">${label}</button>`).join("")}
+  const ov=`<div class="sp${AT==="overview"?" on":""}" id="rip-overview">
+    <div class="g4"><div class="card" style="text-align:center"><div class="sl">Churn Score</div><div style="font-size:50px;font-family:'Syne',sans-serif;font-weight:800;color:${ch.color};line-height:1;text-shadow:0 0 28px ${ch.color}60">${ch.score}</div><div style="font-size:11px;color:var(--muted);margin:4px 0 9px">/100</div>${pill(ch.label+" Risk",ch.color)}<div style="margin:11px 0 3px;height:4px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:${ch.score}%;background:linear-gradient(90deg,#34d399,${ch.color})"></div></div></div>
+    <div class="card" style="text-align:center"><div class="sl">Predicted Mood</div><div style="font-size:40px;margin-bottom:7px;filter:drop-shadow(0 0 13px ${md.color}60)">${md.emoji}</div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:${md.color}">${md.label}</div><div style="font-size:11px;color:var(--muted);margin-top:5px">Mood classifier</div></div>
+    <div class="card" style="text-align:center"><div class="sl">Compound Sentiment</div><div style="font-size:44px;font-family:'Syne',sans-serif;font-weight:800;line-height:1;color:${s.compound>0.1?"#34d399":s.compound<-0.1?"#ef4444":"#94a3b8"}">${s.compound>0?"+":""}${s.compound.toFixed(2)}</div><div style="font-size:11px;color:var(--muted);margin:4px 0 11px">VADER [-1 → +1]</div><div style="display:flex;gap:5px;justify-content:center">${pill(`+${(s.pos*100).toFixed(0)}%`,"#34d399","psm")}${pill(`-${(s.neg*100).toFixed(0)}%`,"#ef4444","psm")}</div></div>
+    <div class="card"><div class="sl">Signal Detection</div>${[["Churn signals",s.cs,s.cs>0?"#ef4444":"#34d399"],["Anger signals",s.as_,s.as_>2?"#f97316":"#34d399"],["Topics found",k.topics.length,"var(--accent)"]].map(([l,v,col])=>`<div style="display:flex;justify-content:space-between;background:#080c10;border-radius:7px;padding:7px 11px;margin-bottom:5px"><span style="font-size:12px;color:var(--muted)">${l}</span><span style="font-weight:800;color:${col};font-family:'IBM Plex Mono',monospace">${v}</span></div>`).join("")}</div></div>
+    <div class="g2"><div class="card"><div class="sl">Customer Health Radar</div><canvas id="ri-radar" height="190"></canvas></div>
+    <div class="card"><div class="sl">Detected Topics (TF-IDF)</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px">${k.topics.length?k.topics.map(t=>pill(t,t.includes("churn")||t.includes("damage")||t.includes("escalat")?"#ef4444":t.includes("positive")||t.includes("upsell")?"#34d399":"#fbbf24")).join(""):"<span style='color:var(--muted);font-size:12px'>No strong topics detected</span>"}</div><div class="sl">Top Keywords</div><div style="display:flex;flex-wrap:wrap;gap:4px">${k.topTerms.map(t=>`<span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5a8aaa;background:#0a1520;border:1px solid var(--border);border-radius:5px;padding:2px 7px">${t}</span>`).join("")}</div></div></div>
   </div>`;
 
-  // ── OVERVIEW PANE ──
-  const overviewPane=`<div class="pane${activeTab==="overview"?" active":""}" id="pane-overview">
-    <div class="kpi-grid">
-      <div class="card" style="text-align:center">
-        <div class="section-label">Churn Score</div>
-        <div class="kpi-value ${churn.score>=72?"glow-red":churn.score>=52?"glow-orange":churn.score>=32?"glow-yellow":"glow-green"}" style="color:${churn.color}">${churn.score}</div>
-        <div style="font-size:11px;color:var(--muted);margin:4px 0 10px">/ 100</div>
-        ${pill(churn.label+" Risk",churn.color)}
-        <div style="margin:12px 0 4px;height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:${churn.score}%;background:linear-gradient(90deg,#34d399,${churn.color});transition:width 1s"></div></div>
-      </div>
-      <div class="card" style="text-align:center">
-        <div class="section-label">Predicted Mood</div>
-        <div style="font-size:44px;margin-bottom:8px;filter:drop-shadow(0 0 16px ${mood.color}60)">${mood.emoji}</div>
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:${mood.color}">${mood.label}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:6px;font-family:'IBM Plex Mono',monospace">Mood classifier output</div>
-      </div>
-      <div class="card" style="text-align:center">
-        <div class="section-label">Compound Sentiment</div>
-        <div class="kpi-value" style="color:${sent.compound>0.1?"#34d399":sent.compound<-0.1?"#ef4444":"#94a3b8"};font-size:44px">${sent.compound>0?"+":""}${sent.compound.toFixed(2)}</div>
-        <div style="font-size:11px;color:var(--muted);margin:4px 0 12px">VADER score (−1 → +1)</div>
-        <div style="display:flex;gap:8px;justify-content:center">${pill(`+${(sent.pos*100).toFixed(0)}% pos`,"#34d399","pill-sm")}${pill(`-${(sent.neg*100).toFixed(0)}% neg`,"#ef4444","pill-sm")}</div>
-      </div>
-      <div class="card" style="text-align:center">
-        <div class="section-label">Signal Detection</div>
-        ${[["Churn signals",sent.churnSignals,sent.churnSignals>0?"#ef4444":"#34d399"],["Anger signals",sent.angerSignals,sent.angerSignals>2?"#f97316":"#34d399"],["Topics found",kw.topics.length,"#3b9ef0"]].map(([l,v,col])=>`<div style="display:flex;justify-content:space-between;background:#080c10;border-radius:8px;padding:8px 12px;margin-bottom:6px"><span style="font-size:12px;color:var(--muted)">${l}</span><span style="font-weight:800;color:${col};font-family:'IBM Plex Mono',monospace;font-size:13px">${v}</span></div>`).join("")}
-      </div>
-    </div>
-    <div class="grid-2">
-      <div class="card">
-        <div class="section-label">Customer Health Radar</div>
-        <canvas id="radar-chart" height="220"></canvas>
-      </div>
-      <div class="card">
-        <div class="section-label">Detected Topics (TF-IDF)</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">${kw.topics.length?kw.topics.map(t=>pill(t,t.includes("churn")||t.includes("damage")||t.includes("escalat")?"#ef4444":t.includes("positive")||t.includes("upsell")?"#34d399":"#fbbf24")).join(""):"<span style='color:var(--muted);font-size:12px'>No strong domain topics detected</span>"}</div>
-        <div class="section-label">Top Keywords (TF-IDF ranked)</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">${kw.topTerms.map(t=>`<span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5a8aaa;background:#0a1520;border:1px solid var(--border);border-radius:6px;padding:3px 8px">${t}</span>`).join("")}</div>
-      </div>
-    </div>
+  const sntml=`<div class="sp${AT==="sentiment"?" on":""}" id="rip-sent">
+    <div class="card"><div class="sl">Sentiment Arc — Customer Lines (VADER)</div><canvas id="ri-arc" height="190"></canvas></div>
+    <div class="g2"><div class="card"><div class="sl">VADER Breakdown</div>${[["Positive tokens",(s.pos*100).toFixed(1)+"%","#34d399"],["Negative tokens",(s.neg*100).toFixed(1)+"%","#ef4444"],["Neutral tokens",(s.neu*100).toFixed(1)+"%","#94a3b8"],["Compound score",s.compound.toFixed(4),"var(--accent)"],["Churn phrase hits",s.cs,"#ef4444"],["Anger phrase hits",s.as_,"#f97316"]].map(([l,v,col])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:#5a8aaa">${l}</span><span style="font-weight:800;color:${col};font-family:'IBM Plex Mono',monospace">${v}</span></div>`).join("")}</div>
+    <div class="card"><div class="sl">Model Architecture</div><div style="font-size:12px;color:#5a8aaa;line-height:1.9"><div style="color:var(--accent);font-weight:700;margin-bottom:5px">VADER-Inspired NLP</div><p>• 150+ domain lexicon terms (-3.5 → +3.5)</p><p>• 12 booster word amplifiers (×1.1–1.5)</p><p>• Negation look-back 3 tokens (−0.74×)</p><p>• 11 churn phrase detectors (−2.5 each)</p><p>• 14 anger phrase triggers (−1.2 each)</p><div style="color:var(--accent);font-weight:700;margin:9px 0 5px">TF-IDF Extractor</div><p>• Domain IDF bias on 15 key terms</p><p>• 80-word stoplist · 10 topic categories</p></div></div></div>
   </div>`;
 
-  // ── SENTIMENT PANE ──
-  const sentPane=`<div class="pane${activeTab==="sentiment"?" active":""}" id="pane-sentiment">
-    <div class="card">
-      <div class="section-label">Sentiment Arc — Customer Lines (VADER)</div>
-      <canvas id="arc-chart" height="220"></canvas>
-      <div style="display:flex;gap:20px;justify-content:center;margin-top:8px">${pill("Negative ≤ −20","#ef4444","pill-sm")}${pill("Neutral −20 to 20","#94a3b8","pill-sm")}${pill("Positive ≥ 20","#34d399","pill-sm")}</div>
-    </div>
-    <div class="grid-2">
-      <div class="card">
-        <div class="section-label">VADER Score Breakdown</div>
-        ${[["Positive tokens",(sent.pos*100).toFixed(1)+"%","#34d399"],["Negative tokens",(sent.neg*100).toFixed(1)+"%","#ef4444"],["Neutral tokens",(sent.neu*100).toFixed(1)+"%","#94a3b8"],["Compound score",sent.compound.toFixed(4),"#3b9ef0"],["Churn phrase hits",sent.churnSignals,"#ef4444"],["Anger phrase hits",sent.angerSignals,"#f97316"]].map(([l,v,col])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:#5a8aaa">${l}</span><span style="font-weight:800;color:${col};font-family:'IBM Plex Mono',monospace;font-size:13px">${v}</span></div>`).join("")}
-      </div>
-      <div class="card">
-        <div class="section-label">Model Architecture</div>
-        <div style="font-size:12px;color:#5a8aaa;line-height:1.9">
-          <div style="color:var(--accent);font-weight:700;margin-bottom:8px;font-family:'IBM Plex Mono',monospace">VADER-Inspired NLP</div>
-          <p>• Domain lexicon: <strong style="color:var(--text)">150+ terms</strong> scored −3.5 → +3.5</p>
-          <p>• Booster words: <strong style="color:var(--text)">12 amplifiers</strong> (1.1× – 1.5×)</p>
-          <p>• Negation window: <strong style="color:var(--text)">lookback 3 tokens</strong>, −0.74× flip</p>
-          <p>• Churn phrases: <strong style="color:var(--text)">11 explicit signals</strong> (−2.5 each)</p>
-          <p>• Anger phrases: <strong style="color:var(--text)">14 triggers</strong> (−1.2 each)</p>
-          <p>• Normalisation: <strong style="color:var(--text)">√(x²+15) sigmoid</strong> → [−1, +1]</p>
-          <div style="color:var(--accent);font-weight:700;margin:10px 0 6px;font-family:'IBM Plex Mono',monospace">TF-IDF Extractor</div>
-          <p>• Domain IDF bias: <strong style="color:var(--text)">15 delivery terms</strong></p>
-          <p>• Stopword list: <strong style="color:var(--text)">80 common tokens</strong> filtered</p>
-          <p>• Domain topic map: <strong style="color:var(--text)">10 categories</strong></p>
-        </div>
-      </div>
-    </div>
+  const chhtml=`<div class="sp${AT==="churn"?" on":""}" id="rip-churn">
+    <div class="g2"><div class="card"><div class="sl">Feature Importances (LR Weights)</div><canvas id="ri-imp" height="250"></canvas></div>
+    <div class="card"><div class="sl">Model Output</div><div style="text-align:center;margin-bottom:14px"><div style="font-size:58px;font-family:'Syne',sans-serif;font-weight:800;color:${ch.color};line-height:1;text-shadow:0 0 38px ${ch.color}50">${ch.score}</div><div style="font-size:11px;color:var(--muted);margin:4px 0 9px">Churn Score</div>${pill(ch.label+" Risk",ch.color)}</div><div style="font-size:12px;color:#5a8aaa;line-height:1.9"><p>Model: <strong style="color:var(--text)">Logistic Regression</strong></p><p>Features: <strong style="color:var(--text)">10 weighted inputs</strong></p><p>Activation: <strong style="color:var(--text)">Sigmoid → ×1.3 scale</strong></p><p>P(churn): <strong style="color:${ch.color}">${(ch.prob*100).toFixed(1)}%</strong></p></div></div></div>
+    <div class="card"><div class="sl">Raw Feature Values</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:9px">${[["Missed",c.missed_deliveries,10,"#ef4444",false],["Late",c.late_deliveries,15,"#f97316",false],["Tickets",c.open_tickets,6,"#f97316",false],["Pay Delays",c.payment_delays,6,"#fbbf24",false],["NPS",c.nps_score,10,"#34d399",true]].map(([l,v,mx,col,inv])=>`<div style="background:#080c10;border-radius:7px;padding:11px 13px;border:1px solid var(--border)"><div style="font-size:11px;color:var(--muted);margin-bottom:6px">${l}</div><div style="font-size:22px;font-weight:800;color:${col};font-family:'Syne',sans-serif">${v}</div><div style="height:3px;background:var(--border);border-radius:2px;margin-top:6px"><div style="height:100%;border-radius:2px;width:${(inv?(1-v/mx):(v/mx))*100}%;background:${col}"></div></div></div>`).join("")}</div></div>
   </div>`;
 
-  // ── CHURN PANE ──
-  const churnPane=`<div class="pane${activeTab==="churn"?" active":""}" id="pane-churn">
-    <div class="grid-2">
-      <div class="card">
-        <div class="section-label">Feature Importances (Logistic Regression Weights)</div>
-        <canvas id="importance-chart" height="280"></canvas>
-        <div style="display:flex;gap:12px;margin-top:8px">${pill("Risk factor","#f97316","pill-sm")}${pill("Protective factor","#34d399","pill-sm")}</div>
-      </div>
-      <div class="card">
-        <div class="section-label">Model Output</div>
-        <div style="text-align:center;margin-bottom:16px">
-          <div style="font-size:64px;font-family:'Syne',sans-serif;font-weight:800;color:${churn.color};line-height:1;text-shadow:0 0 40px ${churn.color}50">${churn.score}</div>
-          <div style="font-size:11px;color:var(--muted);margin:4px 0 10px">Churn Score</div>
-          ${pill(churn.label+" Risk",churn.color)}
-        </div>
-        <div style="font-size:12px;color:#5a8aaa;line-height:1.9">
-          <div style="color:var(--accent);font-weight:700;margin-bottom:6px;font-family:'IBM Plex Mono',monospace">Architecture</div>
-          <p>Model: <strong style="color:var(--text)">Logistic Regression</strong></p>
-          <p>Features: <strong style="color:var(--text)">10 weighted inputs</strong></p>
-          <p>Activation: <strong style="color:var(--text)">Sigmoid → ×1.3 scale</strong></p>
-          <p>P(churn): <strong style="color:${churn.color}">${(churn.probability*100).toFixed(1)}%</strong></p>
-          <div style="color:var(--accent);font-weight:700;margin:10px 0 6px;font-family:'IBM Plex Mono',monospace">Inputs</div>
-          <p>CRM: tickets, missed, late, NPS…</p>
-          <p>NLP: sentiment, anger/churn signals</p>
-          <p>Tier bias: Platinum −12, Gold −6</p>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="section-label">Raw Feature Values → Model Input</div>
-      <div class="grid-4" style="grid-template-columns:repeat(5,1fr)">
-        ${[["Missed Deliveries",c.missed_deliveries,10,"#ef4444",false],["Late Deliveries",c.late_deliveries,15,"#f97316",false],["Open Tickets",c.open_tickets,6,"#f97316",false],["Payment Delays",c.payment_delays,6,"#fbbf24",false],["NPS Score",c.nps_score,10,"#34d399",true]].map(([l,v,max,col,inv])=>`<div style="background:#080c10;border-radius:8px;padding:12px 14px;border:1px solid var(--border)"><div style="font-size:11px;color:var(--muted);margin-bottom:8px">${l}</div><div style="font-size:26px;font-weight:800;color:${col};font-family:'Syne',sans-serif">${v}</div><div style="height:3px;background:var(--border);border-radius:2px;margin-top:8px"><div style="height:100%;border-radius:2px;width:${(inv?(1-v/max):(v/max))*100}%;background:${col}"></div></div></div>`).join("")}
-      </div>
-    </div>
+  const sc=scs[ASC];
+  const schtml=`<div class="sp${AT==="scripts"?" on":""}" id="rip-scripts">
+    <div style="display:flex;gap:7px;flex-wrap:wrap">${scs.map((s,i)=>`<button class="sbtn${ASC===i?" on":""}" onclick="swSC(${i})">${s.scenario}</button>`).join("")}</div>
+    ${sc?`<div class="card" style="display:flex;gap:13px;align-items:center"><div><div style="display:flex;gap:9px;align-items:center;margin-bottom:5px"><span style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#f0f4f8">${sc.scenario}</span>${pill(sc.urgency,uc(sc.urgency),"psm")}</div><div style="font-size:12px;color:var(--muted)">Tone: <span style="color:var(--accent)">${sc.tone}</span></div><div style="font-size:10px;color:#1e3a50;margin-top:3px;font-family:'IBM Plex Mono',monospace">churn=${ch.score} · mood=${md.label} · topics=${k.topics.slice(0,2).join(",")||"none"}</div></div></div>
+    <div class="card" style="border-left:3px solid var(--accent)"><div class="sl">🎙 Opening Line</div><div style="font-size:13px;color:#a0c8e0;line-height:1.8;font-style:italic">${sc.opener}</div></div>
+    <div class="card"><div class="sl">📌 Key Talking Points</div>${sc.pts.map((p,i)=>`<div class="prow"><span style="color:var(--accent);font-family:'IBM Plex Mono',monospace;font-weight:700;min-width:18px">${i+1}</span><span style="font-size:12px;color:#8aaabb;line-height:1.6">${p}</span></div>`).join("")}</div>
+    <div class="card"><div class="sl">🛡 Objection Handlers</div>${sc.ohs.map(oh=>`<div class="objbox"><div class="objc"><span style="color:#ef4444;font-weight:700;font-size:11px;min-width:65px">Customer:</span><span style="font-size:12px;color:#c88888;font-style:italic;line-height:1.6">${oh.o}</span></div><div class="obja"><span style="color:#34d399;font-weight:700;font-size:11px;min-width:65px">Agent:</span><span style="font-size:12px;color:#8ab8cc;line-height:1.6">${oh.r}</span></div></div>`).join("")}</div>
+    <div class="card" style="border-left:3px solid #34d399"><div class="sl">✅ Closing Line</div><div style="font-size:13px;color:#a0c8e0;line-height:1.8;font-style:italic">${sc.closer}</div></div>`:""}
   </div>`;
 
-  // ── SCRIPTS PANE ──
-  const sc=scripts[activeScript];
-  const scriptsPane=`<div class="pane${activeTab==="scripts"?" active":""}" id="pane-scripts">
-    <div class="script-tabs">${scripts.map((s,i)=>`<button class="script-tab${activeScript===i?" active":""}" onclick="switchScript(${i})">${s.scenario}</button>`).join("")}</div>
-    ${sc?`
-    <div class="card" style="display:flex;gap:14px;align-items:center">
-      <div>
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">
-          <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:#f0f4f8">${sc.scenario}</span>
-          ${pill(sc.urgency,urgColor(sc.urgency),"pill-sm")}
-        </div>
-        <div style="font-size:12px;color:var(--muted)">Tone: <span style="color:var(--accent)">${sc.tone}</span></div>
-        <div style="font-size:11px;color:#2d4a5a;margin-top:4px;font-family:'IBM Plex Mono',monospace">Generated from churn=${churn.score}, mood=${mood.label}, topics=${kw.topics.slice(0,2).join(",")||"none"}</div>
-      </div>
-    </div>
-    <div class="card" style="border-left:3px solid var(--accent)">
-      <div class="section-label">🎙 Opening Line</div>
-      <div style="font-size:14px;color:#a0c8e0;line-height:1.8;font-style:italic">${sc.opener}</div>
-    </div>
-    <div class="card">
-      <div class="section-label">📌 Key Talking Points</div>
-      ${sc.keyPoints.map((pt,i)=>`<div class="point-row"><span class="point-num">${i+1}</span><span style="font-size:13px;color:#8aaabb;line-height:1.6">${pt}</span></div>`).join("")}
-    </div>
-    <div class="card">
-      <div class="section-label">🛡 Objection Handlers (predicted from NLP)</div>
-      ${sc.objectionHandlers.map(oh=>`<div class="objection-row"><div class="obj-cust"><span style="color:#ef4444;font-weight:700;font-size:12px;min-width:70px">Customer:</span><span style="font-size:12px;color:#c88888;font-style:italic;line-height:1.6">${oh.objection}</span></div><div class="obj-agent"><span style="color:#34d399;font-weight:700;font-size:12px;min-width:70px">Agent:</span><span style="font-size:12px;color:#8ab8cc;line-height:1.6">${oh.response}</span></div></div>`).join("")}
-    </div>
-    <div class="card" style="border-left:3px solid #34d399">
-      <div class="section-label">✅ Closing Line</div>
-      <div style="font-size:14px;color:#a0c8e0;line-height:1.8;font-style:italic">${sc.closer}</div>
-    </div>`:""}
-  </div>`;
-
-  document.getElementById("pipeline-output").innerHTML=`<div class="fadeup">${tabBar}${overviewPane}${sentPane}${churnPane}${scriptsPane}</div>`;
-
-  // Draw charts
+  document.getElementById("ri-out").innerHTML=`<div class="fu">${tb}${ov}${sntml}${chhtml}${schtml}</div>`;
   requestAnimationFrame(()=>{
-    if(activeTab==="overview")drawRadar(radar);
-    if(activeTab==="sentiment")drawArc(arc);
-    if(activeTab==="churn")drawImportance(churn.importances);
+    if(AT==="overview")drawRD();
+    if(AT==="sentiment")drawARC();
+    if(AT==="churn")drawIMP();
   });
 }
+function swRT(id){AT=id;renderRI()}
+function swSC(i){ASC=i;renderRI()}
+function drawRD(){dC("rd");const el=document.getElementById("ri-radar");if(!el||!AR)return;CR["rd"]=new Chart(el,{type:"radar",data:{labels:AR.rd.map(r=>r.m),datasets:[{data:AR.rd.map(r=>r.v),borderColor:"var(--accent)",backgroundColor:"rgba(59,158,240,.15)",pointBackgroundColor:"var(--accent)",pointRadius:4,borderWidth:2}]},options:{responsive:true,scales:{r:{grid:{color:"#192838"},pointLabels:{color:"#3d6070",font:{size:10}},ticks:{display:false},suggestedMin:0,suggestedMax:100}},plugins:{legend:{display:false},tooltip:{backgroundColor:"#0b1118",borderColor:"#192838",borderWidth:1}}}})}
+function drawARC(){dC("arc");const el=document.getElementById("ri-arc");if(!el||!AR)return;const sc=AR.a.map(a=>a.score);CR["arc"]=new Chart(el,{type:"line",data:{labels:AR.a.map(a=>a.segment),datasets:[{data:sc,borderColor:"var(--accent)",backgroundColor:"rgba(59,158,240,.1)",pointBackgroundColor:sc.map(s=>s>=20?"#34d399":s<=-20?"#ef4444":"#94a3b8"),pointRadius:5,fill:true,tension:.4,borderWidth:2.5,label:"Sentiment"}]},options:{responsive:true,scales:{x:{grid:{color:"#192838"},ticks:{color:"#3d6070"}},y:{min:-100,max:100,grid:{color:"#192838"},ticks:{color:"#3d6070"}}},plugins:{legend:{display:false},tooltip:{backgroundColor:"#0b1118",borderColor:"#192838",borderWidth:1}}}})}
+function drawIMP(){dC("imp");const el=document.getElementById("ri-imp");if(!el||!AR)return;CR["imp"]=new Chart(el,{type:"bar",data:{labels:AR.ch.imp.map(f=>f.feature),datasets:[{data:AR.ch.imp.map(f=>f.imp),backgroundColor:AR.ch.imp.map(f=>f.dir==="risk"?"rgba(249,115,22,.8)":"rgba(52,211,153,.8)"),borderRadius:4,label:"Importance %"}]},options:{indexAxis:"y",responsive:true,scales:{x:{grid:{color:"#192838"},ticks:{color:"#3d6070",callback:v=>v+"%"}},y:{grid:{display:false},ticks:{color:"#5a8aaa",font:{size:10}}}},plugins:{legend:{display:false},tooltip:{backgroundColor:"#0b1118",borderColor:"#192838",borderWidth:1,callbacks:{label:c=>` ${c.raw}%`}}}}})}
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑯  CHART RENDERERS
-═══════════════════════════════════════════════════════════════════════════ */
-const chartDefaults={color:"#5a8aaa",borderColor:"#192838",gridColor:"#192838"};
-
-function drawRadar(radar){
-  const el=document.getElementById("radar-chart");
-  if(!el)return;
-  if(chartInstances.radar)chartInstances.radar.destroy();
-  chartInstances.radar=new Chart(el,{type:"radar",data:{labels:radar.map(r=>r.metric),datasets:[{data:radar.map(r=>r.value),borderColor:"#3b9ef0",backgroundColor:"rgba(59,158,240,0.15)",pointBackgroundColor:"#3b9ef0",pointRadius:4,borderWidth:2}]},options:{responsive:true,scales:{r:{grid:{color:"#192838"},pointLabels:{color:"#3d6070",font:{size:11}},ticks:{display:false},suggestedMin:0,suggestedMax:100}},plugins:{legend:{display:false},tooltip:{backgroundColor:"#0b1118",borderColor:"#192838",borderWidth:1}}}});
+/* ══ MODULE 2: COMPETITIVE INTELLIGENCE ══ */
+const COMPS=[
+  {name:"QuickShip",aliases:["quickship","quick ship"],color:"#ef4444",market:"Express Delivery"},
+  {name:"BlueDart",aliases:["bluedart","blue dart"],color:"#f97316",market:"Premium Courier"},
+  {name:"Delhivery",aliases:["delhivery"],color:"#fbbf24",market:"E-commerce Logistics"},
+  {name:"Shadowfax",aliases:["shadowfax"],color:"#c084fc",market:"Last-Mile"},
+  {name:"Generic Competitor",aliases:["competitor","alternative","another provider","different company","other options"],color:"#94a3b8",market:"Unknown"},
+];
+function detectComp(text){
+  const hits=[];
+  COMPS.forEach(comp=>{comp.aliases.forEach(alias=>{const regex=new RegExp(alias,"gi");const matches=[...text.matchAll(regex)];matches.forEach(m=>{const start=Math.max(0,m.index-45);const end=Math.min(text.length,m.index+alias.length+45);hits.push({competitor:comp.name,color:comp.color,market:comp.market,context:"…"+text.slice(start,end).replace(/\n/g," ")+"…"})})})});
+  return hits;
+}
+function renderCI(){
+  const body=document.getElementById("ci-body");
+  const allM=[];CX.forEach(c=>{const hits=detectComp(LOGS[c.id]||"");hits.forEach(h=>allM.push({...h,customer:c.name,cid:c.id,tier:c.tier,churnScore:qc(c)}))});
+  const cSum={};allM.forEach(m=>{if(!cSum[m.competitor])cSum[m.competitor]={name:m.competitor,color:m.color,market:m.market,count:0,customers:new Set(),maxChurn:0};cSum[m.competitor].count++;cSum[m.competitor].customers.add(m.customer);cSum[m.competitor].maxChurn=Math.max(cSum[m.competitor].maxChurn,m.churnScore)});
+  const sorted=Object.values(cSum).sort((a,b)=>b.count-a.count);
+  const atRisk=CX.filter(c=>detectComp(LOGS[c.id]||"").length>0).reduce((s,c)=>s+c.contract_value,0);
+  body.innerHTML=`
+    <div class="g3" style="grid-template-columns:repeat(3,1fr)">
+      <div class="card" style="border-left:3px solid #ef4444"><div class="sl">Competitor Mentions Detected</div><div style="font-size:38px;font-family:'Syne',sans-serif;font-weight:800;color:#ef4444">${allM.length}</div><div style="font-size:12px;color:var(--muted);margin-top:4px">across ${new Set(allM.map(m=>m.cid)).size} customers</div></div>
+      <div class="card" style="border-left:3px solid #fbbf24"><div class="sl">Unique Competitors Named</div><div style="font-size:38px;font-family:'Syne',sans-serif;font-weight:800;color:#fbbf24">${sorted.length}</div><div style="font-size:12px;color:var(--muted);margin-top:4px">QuickShip leads with most mentions</div></div>
+      <div class="card" style="border-left:3px solid #ef4444"><div class="sl">Revenue at Risk</div><div style="font-size:34px;font-family:'Syne',sans-serif;font-weight:800;color:#ef4444">₹${fmt(atRisk)}</div><div style="font-size:12px;color:var(--muted);margin-top:4px">contracts mentioning competitors</div></div>
+    </div>
+    <div class="card"><div class="sl">Competitor Threat Matrix</div>
+      <div style="display:grid;grid-template-columns:repeat(${Math.max(1,Math.min(sorted.length,3))},1fr);gap:11px">
+        ${sorted.map(comp=>{const ts=Math.min(100,comp.count*28+comp.maxChurn*.25);return`<div style="background:#080c10;border:1px solid ${comp.color}33;border-radius:9px;padding:15px;border-left:3px solid ${comp.color}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px"><div><div style="font-weight:800;color:#f0f4f8;font-size:14px">${comp.name}</div><div style="font-size:11px;color:var(--muted)">${comp.market}</div></div><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;color:${comp.color};background:${comp.color}15;border:1px solid ${comp.color}44">${comp.count} mention${comp.count!==1?"s":""}</span></div>
+          <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);margin-bottom:3px">Threat Score</div><div class="rbar"><div class="rfill" style="width:${ts}%;background:${comp.color}"></div></div><div style="font-size:11px;color:${comp.color};margin-top:3px;font-family:'IBM Plex Mono',monospace">${Math.round(ts)}/100</div></div>
+          <div style="font-size:11px;color:var(--muted)">By: <span style="color:#c8d8e8">${[...comp.customers].join(", ")}</span></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Max churn risk: <span style="color:${cc(comp.maxChurn)};font-weight:700">${comp.maxChurn}</span></div>
+        </div>`}).join("")}
+      </div>
+    </div>
+    <div class="card"><div class="sl">All Mention Contexts — In-Call Evidence</div>
+      ${allM.length===0?`<div style="color:var(--muted);font-size:13px;text-align:center;padding:24px">No competitor mentions detected in current call logs</div>`:
+      allM.map(m=>`<div class="mrow" style="border-left-color:${m.color}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">
+          <div style="display:flex;gap:9px;align-items:center"><span style="font-weight:800;color:#f0f4f8;font-size:13px">${m.customer}</span>${pill(m.tier,TC[m.tier]||"#94a3b8","psm")}</div>
+          <div style="display:flex;gap:7px;align-items:center"><span style="font-size:10px;font-weight:700;color:${m.color};background:${m.color}15;border:1px solid ${m.color}44;padding:2px 7px;border-radius:12px">${m.competitor}</span><span style="font-size:10px;color:${cc(m.churnScore)};font-family:'IBM Plex Mono',monospace">Churn: ${m.churnScore}</span></div>
+        </div>
+        <div style="font-size:12px;color:#5a7888;font-style:italic;line-height:1.6;background:#060c12;border-radius:6px;padding:7px 11px">"${m.context}"</div>
+      </div>`).join("")}
+    </div>
+    <div class="card"><div class="sl">🛡 Counter-Messaging Playbook (Auto-Generated)</div>
+      ${sorted.slice(0,3).map(comp=>`<div style="background:#080c10;border-radius:9px;padding:15px;margin-bottom:9px;border:1px solid ${comp.color}22">
+        <div style="font-weight:800;color:${comp.color};font-size:13px;margin-bottom:9px">When customer mentions ${comp.name}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;font-size:12px">
+          <div><div style="color:var(--muted);margin-bottom:5px;font-weight:700">What they likely want:</div><div style="color:#8aaabb;line-height:1.7">• Faster delivery speeds<br>• Better pricing / discounts<br>• Stronger SLA guarantees<br>• Better communication & tracking</div></div>
+          <div><div style="color:var(--muted);margin-bottom:5px;font-weight:700">Your counter-argument:</div><div style="color:#8aaabb;line-height:1.7">• Dedicated account manager + SLA penalties<br>• 30-day trial with no switching risk<br>• Show their historical on-time rate with you<br>• Switching costs & integration disruption</div></div>
+        </div>
+      </div>`).join("")}
+    </div>`;
 }
 
-function drawArc(arc){
-  const el=document.getElementById("arc-chart");
-  if(!el)return;
-  if(chartInstances.arc)chartInstances.arc.destroy();
-  const scores=arc.map(a=>a.score);
-  chartInstances.arc=new Chart(el,{type:"line",data:{labels:arc.map(a=>a.segment),datasets:[{data:scores,borderColor:"#3b9ef0",backgroundColor:"rgba(59,158,240,0.1)",pointBackgroundColor:scores.map(s=>s>=20?"#34d399":s<=-20?"#ef4444":"#94a3b8"),pointRadius:6,fill:true,tension:0.4,borderWidth:2.5,label:"Sentiment Score"}]},options:{responsive:true,scales:{x:{grid:{color:"#192838"},ticks:{color:"#3d6070"}},y:{min:-100,max:100,grid:{color:"#192838"},ticks:{color:"#3d6070"}}},plugins:{legend:{display:false},tooltip:{backgroundColor:"#0b1118",borderColor:"#192838",borderWidth:1}}}});
+/* ══ MODULE 3: DEAL INTELLIGENCE ══ */
+const DEALS=[
+  {id:"D001",customer:"Apex Retail Co.",value:142000,stage:"At Risk",renewal:"2025-06-30",nps:7,missed:3,late:5,tickets:2,payD:1,tier:"Gold"},
+  {id:"D002",customer:"BlueCart Foods",value:310000,stage:"Growing",renewal:"2026-01-15",nps:9,missed:0,late:1,tickets:0,payD:0,tier:"Platinum"},
+  {id:"D003",customer:"Spark Electronics",value:172000,stage:"Critical",renewal:"2025-05-01",nps:5,missed:6,late:9,tickets:4,payD:3,tier:"Gold"},
+  {id:"D004",customer:"Neon Grocery Hub",value:25000,stage:"Stable",renewal:"2025-09-30",nps:6,missed:1,late:4,tickets:1,payD:2,tier:"Silver"},
+  {id:"D005",customer:"Urban Threads",value:34000,stage:"Critical",renewal:"2025-04-15",nps:3,missed:4,late:7,tickets:3,payD:4,tier:"Silver"},
+  {id:"D006",customer:"Harbor Medicals",value:18000,stage:"Stable",renewal:"2025-12-01",nps:8,missed:0,late:1,tickets:0,payD:0,tier:"Bronze"},
+];
+function dHealth(d){return Math.max(0,Math.min(100,100-d.missed*8-d.late*4-d.tickets*6-d.payD*5+(d.nps-5)*3))}
+function daysTo(dt){return Math.round((new Date(dt)-new Date())/(864e5))}
+function stCol(s){return{Growing:"#34d399",Stable:"#60a5fa","At Risk":"#fbbf24",Critical:"#ef4444"}[s]||"#94a3b8"}
+function renderDI(){
+  const body=document.getElementById("di-body");
+  const total=DEALS.reduce((s,d)=>s+d.value,0);const atR=DEALS.filter(d=>["At Risk","Critical"].includes(d.stage)).reduce((s,d)=>s+d.value,0);
+  const crit=DEALS.filter(d=>d.stage==="Critical").length;const grow=DEALS.filter(d=>d.stage==="Growing").reduce((s,d)=>s+d.value,0);
+  body.innerHTML=`
+    <div class="g4"><div class="card" style="border-left:3px solid var(--accent)"><div class="sl">Total Pipeline</div><div style="font-size:26px;font-family:'Syne',sans-serif;font-weight:800;color:#f0f4f8">₹${fmt(total)}</div><div style="font-size:12px;color:var(--muted);margin-top:3px">${DEALS.length} active contracts</div></div>
+    <div class="card" style="border-left:3px solid #ef4444"><div class="sl">Revenue at Risk</div><div style="font-size:26px;font-family:'Syne',sans-serif;font-weight:800;color:#ef4444">₹${fmt(atR)}</div><div style="font-size:12px;color:#ef4444;margin-top:3px">${crit} critical deals</div></div>
+    <div class="card" style="border-left:3px solid #34d399"><div class="sl">Growth Potential</div><div style="font-size:26px;font-family:'Syne',sans-serif;font-weight:800;color:#34d399">₹${fmt(Math.round(grow*.15))}</div><div style="font-size:12px;color:#34d399;margin-top:3px">15% upsell on growing accounts</div></div>
+    <div class="card" style="border-left:3px solid #fbbf24"><div class="sl">Upcoming Renewals</div><div style="font-size:26px;font-family:'Syne',sans-serif;font-weight:800;color:#fbbf24">${DEALS.filter(d=>daysTo(d.renewal)<90).length}</div><div style="font-size:12px;color:#fbbf24;margin-top:3px">renewing within 90 days</div></div></div>
+    <div class="card"><div class="sl">Pipeline Stage Chart</div><canvas id="di-chart" height="150"></canvas></div>
+    <div class="card"><div class="sl">Deal Health Board — Sorted by Risk</div>
+      <div style="display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr 1fr 100px;gap:9px;padding:0 7px 9px;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;border-bottom:1px solid var(--border)"><span>Customer</span><span>Contract</span><span>Health</span><span>Renewal</span><span>NPS</span><span>Stage</span></div>
+      ${DEALS.sort((a,b)=>{const o={Critical:0,"At Risk":1,Stable:2,Growing:3};return o[a.stage]-o[b.stage]}).map(d=>{const h=dHealth(d);const dy=daysTo(d.renewal);const sc=stCol(d.stage);
+        return`<div class="drow"><div><div style="font-weight:700;color:#f0f4f8;font-size:13px">${d.customer}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${pill(d.tier,TC[d.tier]||"#94a3b8","psm")} · ${d.missed} missed · ${d.tickets} tickets</div></div>
+          <div style="font-weight:700;color:var(--accent);font-size:13px">₹${fmt(d.value)}</div>
+          <div><div class="hbar"><div class="hfill" style="width:${h}%;background:${h>70?"#34d399":h>40?"#fbbf24":"#ef4444"}"></div></div><div style="font-size:11px;color:${h>70?"#34d399":h>40?"#fbbf24":"#ef4444"};margin-top:3px;font-family:'IBM Plex Mono',monospace">${h}/100</div></div>
+          <div style="font-size:12px;color:${dy<30?"#ef4444":dy<60?"#fbbf24":"var(--muted)"}"><div>${dy<0?"Expired":dy+"d"}</div><div style="font-size:10px;color:var(--muted);margin-top:1px">${d.renewal}</div></div>
+          <div style="font-size:17px;font-weight:800;color:${d.nps>=8?"#34d399":d.nps>=6?"#fbbf24":"#ef4444"}">${d.nps}<span style="font-size:10px;color:var(--muted)">/10</span></div>
+          <div><span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;color:${sc};background:${sc}18;border:1px solid ${sc}44">${d.stage}</span></div>
+        </div>`;}).join("")}
+    </div>
+    <div class="card"><div class="sl">🎯 Priority Action Queue</div>
+      ${DEALS.filter(d=>["Critical","At Risk"].includes(d.stage)).map(d=>{const dy=daysTo(d.renewal);const sc=stCol(d.stage);const acts=d.stage==="Critical"?["Escalate to account director immediately","Schedule emergency resolution call within 24h","Prepare service credit proposal","Assign dedicated operations monitor"]:["Schedule proactive check-in call","Review SLA compliance this month","Prepare renewal pitch with loyalty discount","Share performance improvement roadmap"];
+        return`<div style="background:#080c10;border-radius:9px;padding:15px;margin-bottom:9px;border-left:3px solid ${sc}"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px"><div><span style="font-weight:800;color:#f0f4f8;font-size:13px">${d.customer}</span><span style="margin-left:9px">${pill(d.stage,sc,"psm")}</span></div><div style="text-align:right;font-size:12px"><div style="color:var(--muted)">Contract: <span style="color:var(--accent);font-weight:700">₹${fmt(d.value)}</span></div><div style="color:${dy<30?"#ef4444":"var(--muted)"}">Renews in ${dy}d</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">${acts.map((a,i)=>`<div style="display:flex;align-items:flex-start;gap:7px;font-size:12px;color:#8aaabb"><span style="color:${sc};font-weight:700;font-family:'IBM Plex Mono',monospace;flex-shrink:0">${i+1}</span>${a}</div>`).join("")}</div></div>`;}).join("")}
+    </div>`;
+  setTimeout(()=>{const el=document.getElementById("di-chart");if(!el)return;dC("dic");const sc={Growing:0,Stable:0,"At Risk":0,Critical:0};const sv={Growing:0,Stable:0,"At Risk":0,Critical:0};DEALS.forEach(d=>{if(sc[d.stage]!==undefined){sc[d.stage]++;sv[d.stage]+=d.value}});CR["dic"]=new Chart(el,{type:"bar",data:{labels:Object.keys(sc),datasets:[{label:"# Deals",data:Object.values(sc),backgroundColor:["#34d399","#60a5fa","#fbbf24","#ef4444"],borderRadius:5,yAxisID:"y"},{label:"Value (₹)",data:Object.values(sv),backgroundColor:["rgba(52,211,153,.2)","rgba(96,165,250,.2)","rgba(251,191,36,.2)","rgba(239,68,68,.2)"],borderRadius:5,yAxisID:"y2"}]},options:{responsive:true,scales:{x:{grid:{color:"#192838"},ticks:{color:"#3d6070"}},y:{grid:{color:"#192838"},ticks:{color:"#3d6070"},position:"left"},y2:{grid:{display:false},ticks:{color:"#3d6070",callback:v=>`₹${(v/1000).toFixed(0)}k`},position:"right"}},parts:{legend:{labels:{color:"#5a8aaa",font:{size:11}}},tooltip:{backgroundColor:"#0b1118",borderColor:"#192838",borderWidth:1}}}})},50);
 }
 
-function drawImportance(importances){
-  const el=document.getElementById("importance-chart");
-  if(!el)return;
-  if(chartInstances.imp)chartInstances.imp.destroy();
-  chartInstances.imp=new Chart(el,{type:"bar",data:{labels:importances.map(f=>f.feature),datasets:[{data:importances.map(f=>f.importance),backgroundColor:importances.map(f=>f.direction==="risk"?"rgba(249,115,22,0.8)":"rgba(52,211,153,0.8)"),borderRadius:4,label:"Importance %"}]},options:{indexAxis:"y",responsive:true,scales:{x:{grid:{color:"#192838"},ticks:{color:"#3d6070",callback:v=>v+"%"}},y:{grid:{display:false},ticks:{color:"#5a8aaa",font:{size:11}}}},plugins:{legend:{display:false},tooltip:{backgroundColor:"#0b1118",borderColor:"#192838",borderWidth:1,callbacks:{label:c=>` ${c.raw}%`}}}}});
+/* ══ MODULE 4: PROSPECTING ══ */
+const LEADS=[
+  {id:"L001",company:"FreshMart India",contact:"Rahul Mehta",role:"Supply Chain Head",city:"Mumbai",industry:"Grocery / FMCG",volume:200,ev:180000,source:"Referral",signals:["Growing 35% YoY","Current provider facing strikes","2 warehouses in expansion zone"],fit:91,urgency:"High"},
+  {id:"L002",company:"TechWorld Gadgets",contact:"Sneha Rao",role:"Operations Director",city:"Bangalore",industry:"Electronics",volume:80,ev:72000,source:"LinkedIn",signals:["Lost delivery partner last month","Active tender published","Bulk shipments to 5 cities"],fit:78,urgency:"Medium"},
+  {id:"L003",company:"PharmaPlus Logistics",contact:"Dr. Anand Kumar",role:"CEO",city:"Hyderabad",industry:"Pharma / Healthcare",volume:120,ev:135000,source:"Trade Show",signals:["Cold-chain requirement matches capability","Budget approved for Q2","Regulatory compliance focus"],fit:85,urgency:"High"},
+  {id:"L004",company:"StyleHouse Retail",contact:"Priti Sharma",role:"Fulfilment Manager",city:"Delhi",industry:"Fashion / Apparel",volume:300,ev:95000,source:"Cold Outreach",signals:["Same-day delivery demand","Current SLA at 72h — we offer 4h","Peak season in 60 days"],fit:67,urgency:"Medium"},
+  {id:"L005",company:"OrganicRoots Farm",contact:"Kiran Patel",role:"Founder",city:"Ahmedabad",industry:"Agri / Organic",volume:50,ev:30000,source:"Inbound",signals:["First logistics partner","Budget-sensitive","Strong NPS if reliable"],fit:55,urgency:"Low"},
+];
+function scCol(s){return s>=85?"#34d399":s>=70?"#60a5fa":s>=55?"#fbbf24":"#f87171"}
+function ucol(u){return{High:"#ef4444",Medium:"#fbbf24",Low:"#34d399"}[u]||"#94a3b8"}
+function genSeq(l){const hi=l.urgency==="High";return[
+  {day:"Day 1",icon:"📧",ch:"Email",text:`Subject: SwiftRoute + ${l.company} — ${l.signals[0]}\n\nHi ${l.contact.split(" ")[0]}, I came across ${l.company} and noticed ${l.signals[0].toLowerCase()}. SwiftRoute covers ${l.city} with same-day delivery and dedicated account management. Worth a 15-minute chat this week?`},
+  {day:hi?"Day 3":"Day 4",icon:"📞",ch:"Call",text:`"Hi ${l.contact.split(" ")[0]}, this is [Name] from SwiftRoute — I sent you an email about ${l.signals[0].toLowerCase()}. Did you get a chance to see it? I'd love to show you how we serve similar ${l.industry} companies with priority routing and SLA guarantees."`},
+  {day:hi?"Day 5":"Day 8",icon:"💼",ch:"Proposal",text:`Send 1-page proposal highlighting:\n• ${l.signals.join("\n• ")}\n• Pilot offer: 30 deliveries free with SLA guarantee\n• Comparable case study from ${l.industry}\n• ROI calculator vs current provider`},
+  {day:hi?"Day 8":"Day 14",icon:"🤝",ch:"Follow-up",text:`"Hi ${l.contact.split(" ")[0]}, I know logistics decisions take time. Happy to share a quick case study of how we helped a ${l.industry} company reduce delivery costs by 18%. Still open to a short call this week?"`},
+]}
+let ALS=null;
+function renderPR(){
+  const body=document.getElementById("pr-body");
+  const totalEV=LEADS.reduce((s,l)=>s+l.ev,0);const hi=LEADS.filter(l=>l.urgency==="High").length;const avg=Math.round(LEADS.reduce((s,l)=>s+l.fit,0)/LEADS.length);
+  body.innerHTML=`
+    <div class="g4"><div class="card" style="border-left:3px solid var(--accent)"><div class="sl">Total Lead Pipeline</div><div style="font-size:24px;font-family:'Syne',sans-serif;font-weight:800;color:#f0f4f8">₹${fmt(totalEV)}</div><div style="font-size:12px;color:var(--muted);margin-top:3px">${LEADS.length} qualified leads</div></div>
+    <div class="card" style="border-left:3px solid #ef4444"><div class="sl">High Priority</div><div style="font-size:24px;font-family:'Syne',sans-serif;font-weight:800;color:#ef4444">${hi}</div><div style="font-size:12px;color:var(--muted);margin-top:3px">act within 7 days</div></div>
+    <div class="card" style="border-left:3px solid #34d399"><div class="sl">Avg Fit Score</div><div style="font-size:24px;font-family:'Syne',sans-serif;font-weight:800;color:#34d399">${avg}/100</div><div style="font-size:12px;color:var(--muted);margin-top:3px">ML-scored on signals + profile</div></div>
+    <div class="card" style="border-left:3px solid #fbbf24"><div class="sl">Est. Conversion Value</div><div style="font-size:24px;font-family:'Syne',sans-serif;font-weight:800;color:#fbbf24">₹${fmt(Math.round(totalEV*.22))}</div><div style="font-size:12px;color:var(--muted);margin-top:3px">at 22% close rate</div></div></div>
+    <div class="card"><div class="sl">Lead Fit Scores (Volume × Industry × Signals × Urgency)</div><canvas id="pr-chart" height="130"></canvas></div>
+    <div class="card"><div class="sl">Lead Pipeline — Sorted by Fit Score</div>
+      ${LEADS.sort((a,b)=>b.fit-a.fit).map(l=>`<div class="lcard">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <div class="sring" style="border:3px solid ${scCol(l.fit)};color:${scCol(l.fit)}">${l.fit}</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:7px">
+              <div><span style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#f0f4f8">${l.company}</span><span style="margin-left:9px;font-size:12px;color:var(--muted)">${l.contact} · ${l.role}</span></div>
+              <div style="display:flex;gap:7px;align-items:center"><span style="font-size:10px;font-weight:700;color:${ucol(l.urgency)};background:${ucol(l.urgency)}15;border:1px solid ${ucol(l.urgency)}44;padding:2px 7px;border-radius:12px">${l.urgency} Priority</span><span style="font-size:12px;color:var(--accent);font-weight:700">₹${fmt(l.ev)}</span></div>
+            </div>
+            <div style="display:flex;gap:14px;margin-top:7px;font-size:12px;color:var(--muted);flex-wrap:wrap"><span>📍 ${l.city}</span><span>🏭 ${l.industry}</span><span>📦 ~${l.volume}/mo</span><span>🔗 ${l.source}</span></div>
+            <div style="margin-top:9px"><div style="font-size:11px;color:var(--muted);margin-bottom:5px">Buying Signals</div><div style="display:flex;flex-wrap:wrap;gap:5px">${l.signals.map(s=>pill(s,"var(--accent)","psm")).join("")}</div></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px;padding-top:11px;border-top:1px solid var(--border)">
+          <button class="sbtn${ALS===l.id?" on":""}" onclick="tgSeq('${l.id}')" style="font-size:11px">${ALS===l.id?"▲ Hide Sequence":"▶ Generate Outreach Sequence"}</button>
+        </div>
+        ${ALS===l.id?`<div style="margin-top:13px"><div style="background:#060c14;border-radius:7px;border:1px solid var(--border);padding:15px"><div style="font-size:10px;color:var(--muted);margin-bottom:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.1em">AUTO-GENERATED OUTREACH SEQUENCE — ${l.urgency.toUpperCase()} PRIORITY</div>${genSeq(l).map((step,i)=>`<div class="sqstep"><div class="sqicon" style="background:${["#0a2035","#1a0a0a","#0a1a0a","#1a1a0a"][i]}">${step.icon}</div><div style="flex:1"><div style="display:flex;gap:9px;align-items:center;margin-bottom:5px"><span style="font-weight:800;color:#f0f4f8;font-size:12px">${step.day}</span><span style="font-size:10px;font-weight:700;color:var(--accent);background:#0a2035;border:1px solid #1a4060;padding:2px 7px;border-radius:12px">${step.ch}</span></div><div style="font-size:12px;color:#7aabb8;line-height:1.7;white-space:pre-wrap">${step.text}</div></div></div>`).join("")}</div></div>`:""}
+      </div>`).join("")}
+    </div>`;
+  setTimeout(()=>{const el=document.getElementById("pr-chart");if(!el)return;dC("prc");CR["prc"]=new Chart(el,{type:"bar",data:{labels:LEADS.map(l=>l.company.split(" ")[0]),datasets:[{data:LEADS.map(l=>l.fit),backgroundColor:LEADS.map(l=>scCol(l.fit)+"cc"),borderRadius:5,label:"Fit Score"}]},options:{responsive:true,scales:{x:{grid:{color:"#192838"},ticks:{color:"#3d6070"}},y:{min:0,max:100,grid:{color:"#192838"},ticks:{color:"#3d6070"}}},plugins:{legend:{display:false},tooltip:{backgroundColor:"#0b1118",borderColor:"#192838",borderWidth:1}}}})},50);
 }
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑰  TAB SWITCHING
-═══════════════════════════════════════════════════════════════════════════ */
-function switchTab(id){
-  activeTab=id;
-  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.textContent.toLowerCase().includes(id.slice(0,4))));
-  document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("active",p.id==="pane-"+id));
-  requestAnimationFrame(()=>{
-    if(id==="overview"&&activeResult)drawRadar(activeResult.radar);
-    if(id==="sentiment"&&activeResult)drawArc(activeResult.arc);
-    if(id==="churn"&&activeResult)drawImportance(activeResult.churn.importances);
-  });
-}
-
-function switchScript(i){activeScript=i;renderResults()}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ⑱  INIT
-═══════════════════════════════════════════════════════════════════════════ */
-renderSidebar();
+function tgSeq(id){ALS=ALS===id?null:id;renderPR()}
 </script>
 </body>
 </html>
