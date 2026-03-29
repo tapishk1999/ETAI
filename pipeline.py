@@ -49,6 +49,19 @@ def utc_now_iso() -> str:
     return datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
 
+def write_payload_file(path: str, payload: dict) -> None:
+    """Write a JSON payload and a JS bootstrap variant beside it."""
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, ensure_ascii=False)
+
+    js_path = os.path.splitext(path)[0] + ".js"
+    with open(js_path, "w", encoding="utf-8") as f:
+        f.write("window.__ETAI_RESULTS__ = ")
+        json.dump(payload, f, ensure_ascii=False)
+        f.write(";\n")
+
+
 # ── Data loaders ──────────────────────────────────────────────────────────────
 
 def load_customers(path: str) -> Dict[str, dict]:
@@ -521,16 +534,13 @@ def main():
     }
 
     output_path = resolve_repo_path(base, args.output, prefer_existing=False)
-    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
-
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2, ensure_ascii=False)
-
-    dashboard_output = os.path.join(base, "docs", "results.json")
-    if os.path.abspath(output_path) != os.path.abspath(dashboard_output):
-        os.makedirs(os.path.dirname(dashboard_output), exist_ok=True)
-        with open(dashboard_output, "w", encoding="utf-8") as f:
-            json.dump(payload, f, indent=2, ensure_ascii=False)
+    targets = {
+        os.path.abspath(output_path),
+        os.path.abspath(os.path.join(base, "docs", "results.json")),
+        os.path.abspath(os.path.join(base, "results.json")),
+    }
+    for target in targets:
+        write_payload_file(target, payload)
 
     if not args.quiet:
         print(f"\n✅ Results written to: {output_path}")
