@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-29T16:38:55.004524Z",
+  "generated_at": "2026-03-29T17:31:47.697041Z",
   "total_customers": 6,
   "results": [
     {
@@ -255,7 +255,7 @@
           "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
         }
       ],
-      "analysed_at": "2026-03-29T16:38:55.003134Z"
+      "analysed_at": "2026-03-29T17:31:47.695420Z"
     },
     {
       "customer_id": "C002",
@@ -514,7 +514,7 @@
           "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
         }
       ],
-      "analysed_at": "2026-03-29T16:38:55.003702Z"
+      "analysed_at": "2026-03-29T17:31:47.695956Z"
     },
     {
       "customer_id": "C003",
@@ -749,7 +749,7 @@
           "closer": "'I'll send over the Platinum tier proposal with a 30-day trial option — no commitment, no pricing change until you decide. Does that sound fair?'"
         }
       ],
-      "analysed_at": "2026-03-29T16:38:55.003963Z"
+      "analysed_at": "2026-03-29T17:31:47.696386Z"
     },
     {
       "customer_id": "C004",
@@ -950,7 +950,7 @@
           "closer": "'Here's what happens next — I'll send you a written commitment letter by end of day, with your dedicated manager's direct line. You'll hear from [Manager Name] within 2 hours. Does that work for you?'"
         }
       ],
-      "analysed_at": "2026-03-29T16:38:55.004004Z"
+      "analysed_at": "2026-03-29T17:31:47.696456Z"
     },
     {
       "customer_id": "C005",
@@ -1221,7 +1221,7 @@
           "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
         }
       ],
-      "analysed_at": "2026-03-29T16:38:55.004264Z"
+      "analysed_at": "2026-03-29T17:31:47.696759Z"
     },
     {
       "customer_id": "C006",
@@ -1479,7 +1479,7 @@
           "closer": "'Thank you for giving SwiftRoute this chance to make it right. I'm sending you a case reference number, my direct line, and the action plan in the next 10 minutes. You will see a change.'"
         }
       ],
-      "analysed_at": "2026-03-29T16:38:55.004521Z"
+      "analysed_at": "2026-03-29T17:31:47.697037Z"
     }
   ]
 }
