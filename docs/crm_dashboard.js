@@ -47,15 +47,33 @@ function bindOpsEvents() {
 }
 
 async function loadOpsPayload() {
+  if (window.__ETAI_RESULTS__?.results?.length) {
+    const stamp = window.__ETAI_RESULTS__.generated_at
+      ? new Date(window.__ETAI_RESULTS__.generated_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
+      : "Bundled snapshot";
+    document.getElementById("opsStamp").textContent = `Ops surface refreshed ${stamp}`;
+    return window.__ETAI_RESULTS__;
+  }
+
+  const candidates = ["results.json", "./results.json", "../docs/results.json"];
   try {
-    const response = await fetch("results.json", { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
+    let payload = null;
+    for (const path of candidates) {
+      const response = await fetch(path, { cache: "no-store" });
+      if (response.ok) {
+        payload = await response.json();
+        break;
+      }
+    }
+    if (!payload) throw new Error("No readable results.json found");
     const stamp = payload.generated_at ? new Date(payload.generated_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "Demo data";
     document.getElementById("opsStamp").textContent = `Ops surface refreshed ${stamp}`;
     return payload;
   } catch (error) {
-    document.getElementById("opsStamp").textContent = `Ops data unavailable (${error.message}).`;
+    const localHint = window.location.protocol === "file:"
+      ? " Open the GitHub Pages link or serve the docs folder over HTTP."
+      : "";
+    document.getElementById("opsStamp").textContent = `Ops data unavailable (${error.message}).${localHint}`;
     return { results: [] };
   }
 }
@@ -119,19 +137,26 @@ function getVisibleOrders() {
 
 function renderOps() {
   const visibleOrders = getVisibleOrders();
-  renderOpsOverview(visibleOrders);
+  const visibleAccounts = getVisibleAccounts(visibleOrders);
+  renderOpsOverview(visibleOrders, visibleAccounts);
   renderOrders(visibleOrders);
   renderAgents(visibleOrders);
-  renderOpsAccounts(visibleOrders);
+  renderOpsAccounts(visibleAccounts);
   renderAnalytics(visibleOrders);
 }
 
-function renderOpsOverview(orders) {
+function getVisibleAccounts(orders) {
+  const names = new Set(orders.map((order) => order.customer));
+  if (!names.size) return [];
+  return opsState.accounts.filter((account) => names.has(account.customer_name));
+}
+
+function renderOpsOverview(orders, accounts) {
   const delivered = orders.filter((order) => order.status === "Delivered").length;
   const activeAgents = new Set(orders.map((order) => order.agent)).size;
   const exceptionOrders = orders.filter((order) => order.status === "Exception").length;
   const pending = orders.filter((order) => order.status === "Pending").length;
-  const revenueAtRisk = opsState.accounts.reduce((sum, account) => sum + (account.business_impact.revenue_at_risk || 0), 0);
+  const revenueAtRisk = accounts.reduce((sum, account) => sum + (account.business_impact.revenue_at_risk || 0), 0);
 
   const kpis = [
     ["Orders in view", String(orders.length), `${pending} pending and ${exceptionOrders} in exception state`],
@@ -149,7 +174,7 @@ function renderOpsOverview(orders) {
     </article>
   `).join("");
 
-  const escalations = [...opsState.accounts]
+  const escalations = [...accounts]
     .sort((a, b) => (b.business_impact.revenue_at_risk || 0) - (a.business_impact.revenue_at_risk || 0))
     .slice(0, 5);
 
@@ -168,7 +193,7 @@ function renderOpsOverview(orders) {
         <div><strong>${escapeHtml(account.action_plan.timeline)}</strong><br>timeline</div>
       </div>
     </article>
-  `).join("");
+  `).join("") || '<div class="chart-empty">No linked accounts match the current filters.</div>';
 
   drawStatusChart(orders);
 }
@@ -234,11 +259,11 @@ function renderAgents(orders) {
   }).join("");
 }
 
-function renderOpsAccounts() {
-  const accounts = [...opsState.accounts]
+function renderOpsAccounts(accounts) {
+  const ranked = [...accounts]
     .sort((a, b) => (b.business_impact.revenue_at_risk || 0) - (a.business_impact.revenue_at_risk || 0));
 
-  document.getElementById("opsAccounts").innerHTML = accounts.map((account) => `
+  document.getElementById("opsAccounts").innerHTML = ranked.length ? ranked.map((account) => `
     <article class="account-card">
       <div class="row-top">
         <div>
@@ -254,7 +279,7 @@ function renderOpsAccounts() {
       </div>
       <div class="copy">${escapeHtml(account.action_plan.next_best_action)}</div>
     </article>
-  `).join("");
+  `).join("") : '<div class="chart-empty">No accounts match the current filters.</div>';
 }
 
 function renderAnalytics(orders) {
@@ -341,8 +366,50 @@ function countAssignments(orders) {
 function drawChart(id, config) {
   if (opsState.charts[id]) opsState.charts[id].destroy();
   const canvas = document.getElementById(id);
-  if (!canvas || typeof Chart === "undefined") return;
+  if (!canvas) return;
+  clearChartMessage(canvas);
+
+  if (!chartHasData(config)) {
+    showChartMessage(canvas, "No data available for this view.");
+    return;
+  }
+
+  if (typeof Chart === "undefined") {
+    showChartMessage(canvas, "Chart library unavailable. Summary cards still reflect the live data.");
+    return;
+  }
+
+  canvas.classList.remove("is-hidden");
   opsState.charts[id] = new Chart(canvas, config);
+}
+
+function chartHasData(config) {
+  const labels = config?.data?.labels || [];
+  const datasets = config?.data?.datasets || [];
+  if (!labels.length || !datasets.length) return false;
+
+  const values = datasets.flatMap((dataset) => Array.isArray(dataset.data) ? dataset.data : []);
+  if (!values.length) return false;
+
+  if (["doughnut", "pie", "polarArea"].includes(config.type)) {
+    return values.some((value) => Number(value || 0) > 0);
+  }
+
+  return values.some((value) => value !== null && value !== undefined);
+}
+
+function showChartMessage(canvas, message) {
+  canvas.classList.add("is-hidden");
+  const fallback = document.createElement("div");
+  fallback.className = "chart-empty";
+  fallback.textContent = message;
+  canvas.insertAdjacentElement("afterend", fallback);
+}
+
+function clearChartMessage(canvas) {
+  canvas.classList.remove("is-hidden");
+  const next = canvas.nextElementSibling;
+  if (next?.classList.contains("chart-empty")) next.remove();
 }
 
 function baseOptions(extra) {
